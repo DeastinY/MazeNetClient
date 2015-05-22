@@ -1,3 +1,5 @@
 MazeNetClient/bin/*
 MazeNetClient/obj/*
 *.suo
+*.pyc
+MonteCarlPY/.idea/*
