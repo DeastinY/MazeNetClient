@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://www.example.org/mazeCom" attributeFormDefault="unqualified"
+	elementFormDefault="qualified">
+
+	<xs:simpleType name="MazeComType" final="restriction">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LOGIN" />
+			<xs:enumeration value="LOGINREPLY" />
+			<xs:enumeration value="AWAITMOVE" />
+			<xs:enumeration value="MOVE" />
+			<xs:enumeration value="ACCEPT" />
+			<xs:enumeration value="WIN" />
+			<xs:enumeration value="DISCONNECT" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="treasureType" final="restriction">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Start01" />
+			<xs:enumeration value="Start02" />
+			<xs:enumeration value="Start03" />
+			<xs:enumeration value="Start04" />
+			<xs:enumeration value="sym01" />
+			<xs:enumeration value="sym02" />
+			<xs:enumeration value="sym03" />
+			<xs:enumeration value="sym04" />
+			<xs:enumeration value="sym05" />
+			<xs:enumeration value="sym06" />
+			<xs:enumeration value="sym07" />
+			<xs:enumeration value="sym08" />
+			<xs:enumeration value="sym09" />
+			<xs:enumeration value="sym10" />
+			<xs:enumeration value="sym11" />
+			<xs:enumeration value="sym12" />
+			<xs:enumeration value="sym13" />
+			<xs:enumeration value="sym14" />
+			<xs:enumeration value="sym15" />
+			<xs:enumeration value="sym16" />
+			<xs:enumeration value="sym17" />
+			<xs:enumeration value="sym18" />
+			<xs:enumeration value="sym19" />
+			<xs:enumeration value="sym20" />
+			<xs:enumeration value="sym21" />
+			<xs:enumeration value="sym22" />
+			<xs:enumeration value="sym23" />
+			<xs:enumeration value="sym24" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ErrorType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NOERROR" />
+			<xs:enumeration value="ERROR" />
+			<xs:enumeration value="AWAIT_LOGIN" />
+			<xs:enumeration value="AWAIT_MOVE" />
+			<xs:enumeration value="ILLEGAL_MOVE" />
+			<xs:enumeration value="TIMEOUT" />
+			<xs:enumeration value="TOO_MANY_TRIES" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="cardType">
+		<xs:sequence>
+			<xs:element name="openings">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="top" type="xs:boolean" minOccurs="1"
+							maxOccurs="1" />
+						<xs:element name="bottom" type="xs:boolean" minOccurs="1"
+							maxOccurs="1" />
+						<xs:element name="left" type="xs:boolean" minOccurs="1"
+							maxOccurs="1" />
+						<xs:element name="right" type="xs:boolean" minOccurs="1"
+							maxOccurs="1" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<!-- Mehrere Spieler pro Feld erlaubt -->
+			<xs:element name="pin">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="playerID" type="xs:int" minOccurs="0"
+							maxOccurs="4" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="treasure" type="treasureType" minOccurs="0">
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Auf dem Server wird ueberprueft, ob die Karte passt -->
+	<!-- <xs:simpleType name="orientationType"> <xs:restriction base="xs:int"> 
+		<xs:enumeration value="0" /> <xs:enumeration value="1" /> <xs:enumeration 
+		value="2" /> <xs:enumeration value="3" /> </xs:restriction> </xs:simpleType> -->
+
+	<xs:complexType name="boardType">
+		<xs:sequence>
+			<xs:element name="row" minOccurs="7" maxOccurs="7">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="col" type="cardType" minOccurs="7"
+							maxOccurs="7" />
+					</xs:sequence>
+					<xs:attribute name="OptionalAttirbute" type="xs:string" />
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="shiftCard" type="cardType" />
+			<xs:element name="forbidden" type="positionType"
+				minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Start bei 0/0 -->
+	<xs:complexType name="positionType">
+		<xs:sequence>
+			<xs:element name="row" type="xs:int" />
+			<xs:element name="col" type="xs:int" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="MazeCom">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element name="LoginMessage" type="LoginMessageType" />
+				<xs:element name="LoginReplyMessage" type="LoginReplyMessageType" />
+				<xs:element name="AwaitMoveMessage" type="AwaitMoveMessageType" />
+				<xs:element name="MoveMessage" type="MoveMessageType" />
+				<xs:element name="AcceptMessage" type="AcceptMessageType" />
+				<xs:element name="WinMessage" type="WinMessageType" />
+				<xs:element name="DisconnectMessage" type="DisconnectMessageType" />
+			</xs:choice>
+			<xs:attribute name="mcType" type="MazeComType" use="required" />
+			<xs:attribute name="id" type="xs:int" use="required" />
+			<!-- <xs:attribute name="text" type="xs:string" /> -->
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="LoginMessageType">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" minOccurs="1"
+				maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="LoginReplyMessageType">
+		<xs:sequence>
+			<xs:element name="newID" type="xs:int" minOccurs="1"
+				maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="AwaitMoveMessageType">
+		<xs:sequence>
+			<xs:element name="board" type="boardType" />
+			<xs:element name="treasuresToGo" type="TreasuresToGoType"
+				minOccurs="1" maxOccurs="4" />
+			<xs:element name="treasure" type="treasureType" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TreasuresToGoType">
+		<xs:sequence>
+			<xs:element name="player" type="xs:int" />
+			<xs:element name="treasures" type="xs:int" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="MoveMessageType">
+		<xs:all>
+			<!-- Wo die Karte hin soll -->
+			<xs:element name="shiftPosition" type="positionType"
+				minOccurs="1" maxOccurs="1" />
+			<!-- Wo der Pin hin soll -->
+			<xs:element name="newPinPos" type="positionType"
+				minOccurs="1" maxOccurs="1" />
+			<!-- Konkrete Karte (auch ausgerichtet) -->
+			<xs:element name="shiftCard" type="cardType" minOccurs="1"
+				maxOccurs="1" />
+		</xs:all>
+	</xs:complexType>
+
+
+
+	<xs:complexType name="AcceptMessageType">
+		<xs:sequence>
+			<xs:element name="accept" type="xs:boolean" />
+			<xs:element name="errorCode" type="ErrorType" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="WinMessageType">
+		<xs:sequence>
+			<xs:element name="board" type="boardType" />
+			<xs:element name="winner">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="id" type="xs:int" use="required" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="DisconnectMessageType">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" minOccurs="1"
+				maxOccurs="1" />
+			<xs:element name="erroCode" type="ErrorType" minOccurs="1"
+				maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>
