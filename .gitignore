@@ -1,2 +1,3 @@
 MazeNetClient/bin/*
 MazeNetClient/obj/*
+*.suo
