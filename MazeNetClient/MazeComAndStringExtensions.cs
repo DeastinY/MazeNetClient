@@ -18,11 +18,12 @@ namespace MazeNetClient
             }
         }
 
+        private static readonly XmlSerializer serializer = new XmlSerializer(typeof(MazeCom), typeof(MazeCom).Namespace);
+
         internal static MazeCom ConvertToMazeCom(this string mazeString)
         {
             using (var stringReader = new StringReader(mazeString))
             {
-                var serializer = new XmlSerializer(typeof(MazeCom));
                 var mazeObject = serializer.Deserialize(stringReader);
                 return (MazeCom)mazeObject;
             }
@@ -32,7 +33,6 @@ namespace MazeNetClient
         {
             using (var stringWriter = new UTF8StringWriter())
             {
-                var serializer = new XmlSerializer(typeof(MazeCom));
                 serializer.Serialize(stringWriter, mazeObject);
                 var mazeString = stringWriter.ToString();
                 return mazeString;

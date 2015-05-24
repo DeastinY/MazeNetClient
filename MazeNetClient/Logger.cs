@@ -19,7 +19,7 @@ namespace MazeNetClient
             }
             catch (Exception ex)
             {
-                ShowException(ex);
+                ShowException(ex, false);
             }
         }
 
@@ -44,17 +44,22 @@ namespace MazeNetClient
 
         internal static void WriteToFile(string value)
         {
-            File.AppendAllText(FilePath, value + NewLine);
+            try
+            {
+                File.AppendAllText(FilePath, value + NewLine);
+            }
+            catch (Exception ex)
+            {
+                ShowException(ex, false);
+            }
         }
 
-        internal static void ShowException(Exception ex)
+        internal static void ShowException(Exception ex, bool writeToFile = false)
         {
             var previousColor = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;
-            WriteLine(ex.Message);
+            WriteLine(ex.Message, writeToFile);
             Console.ForegroundColor = previousColor;
-
-            WriteToFile(ex.Message);
         }
 
         [Conditional("DEBUG")]

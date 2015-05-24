@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Xml.Serialization;
 
 namespace MazeNetClient
 {
@@ -54,12 +53,12 @@ namespace MazeNetClient
             {
                 Logger.Write("Join a new game? (J/N):");
                 var userInput = Console.ReadLine();
-                bool isYes = StringEquals(userInput, "j");
+                bool isYes = StringsAreEqual(userInput, "j");
                 if (isYes)
                     JoinGame(ipAddress, port);
                 else
                 {
-                    bool isNo = StringEquals(userInput, "n");
+                    bool isNo = StringsAreEqual(userInput, "n");
                     if (isNo)
                         break;
                     else
@@ -68,7 +67,7 @@ namespace MazeNetClient
             }
         }
 
-        static bool StringEquals(string first, string second)
+        static bool StringsAreEqual(string first, string second)
         {
             return String.Equals(first, second, StringComparison.CurrentCultureIgnoreCase);
         }
@@ -81,14 +80,9 @@ namespace MazeNetClient
             {
                 using (var connection = new Network.ServerConnection(ipAddress, port))
                 {
-                    connection.SendMessage(MazeComMessageFactory.CreateLoginMessage("hi").ConvertToString());
-                    string s = connection.ReceiveMessage();
-                    var a = s.ConvertToMazeCom();
-                    int id = a.id;
-
-                    string ataiwmove = connection.ReceiveMessage();
-                    var mc = ataiwmove.ConvertToMazeCom();
-
+                    var mazePlayer = new AI.UserInputMazePlayer();
+                    Communicator com = new Communicator(connection, "f4NCY 42 fuXOR", mazePlayer);
+                    com.StartCommunication();
                 }
             }
             catch (Exception ex)
