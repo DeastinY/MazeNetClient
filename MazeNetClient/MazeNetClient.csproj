@@ -63,9 +63,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\IMazePlayer.cs" />
+    <Compile Include="AI\Move.cs" />
+    <Compile Include="AI\SimpleMazePlayer.cs" />
     <Compile Include="AI\UserInputMazePlayer.cs" />
     <Compile Include="Communicator.cs" />
     <Compile Include="Game\Field.cs" />
+    <Compile Include="Game\GameExtensions.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MazeComAndStringExtensions.cs" />
     <Compile Include="Network\ServerConnection.cs" />

@@ -1,4 +1,5 @@
 ﻿using MazeNetClient.XSDGenerated;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace MazeNetClient.Game
@@ -8,17 +9,17 @@ namespace MazeNetClient.Game
     /// A board consist of 7 times 7 fields, a shift card, a forbidden shifting place
     /// and the information about the next treasures position.
     /// </summary>
-    class Board
+    class Board : IEnumerable<Field>
     {
         /// <summary>
         /// This is the number of rows, that the playing board has.
         /// </summary>
-        private const int ROW_COUNT = 7;
+        internal const int ROW_COUNT = 7;
 
         /// <summary>
         /// This is the number of columns, that the playing board has.
         /// </summary>
-        private const int COLUMN_COUNT = 7;
+        internal const int COLUMN_COUNT = 7;
 
         /// <summary>
         /// Holds an array with the length ROW_COUNT * COLUMN_COUNT.
@@ -69,7 +70,7 @@ namespace MazeNetClient.Game
                 ForbiddenShiftColumn = forbiddenShiftPos.col;
             }
 
-            ShiftCard = new Field(currentBoard.shiftCard);
+            ShiftCard = new Field(currentBoard.shiftCard, -1, -1);
 
             TreasureTarget = currentGameStatus.treasure;
 
@@ -83,7 +84,7 @@ namespace MazeNetClient.Game
                 for (int j = 0; j < boardColumns.Length; ++j)
                 {
                     int index = i * ROW_COUNT + j;
-                    m_fields[index] = new Field(boardColumns[j]);
+                    m_fields[index] = new Field(boardColumns[j], i, j);
                 }
             }
 
@@ -101,6 +102,19 @@ namespace MazeNetClient.Game
                 int index = row * ROW_COUNT + column;
                 return m_fields[index];
             }
+        }
+
+        public IEnumerator<Field> GetEnumerator()
+        {
+            foreach (var aField in m_fields)
+            {
+                yield return aField;
+            }
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

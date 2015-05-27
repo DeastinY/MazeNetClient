@@ -14,9 +14,9 @@ namespace MazeNetClient.Network
         const int MESSAGE_LENGTH_SIZE = 4;
 
         /// <summary>
-        /// This constant represents an integer, with the first two bytes being filled up with 1.
+        /// This constant represents an integer, with the first byte being filled up with 1.
         /// </summary>
-        const int LOWEST_TWO_BYTES = 0xff;
+        const int LOWEST_BYTE = 0xff;
 
         /// <summary>
         /// Describes eight bits for shifting operations.
@@ -42,7 +42,7 @@ namespace MazeNetClient.Network
             byte[] byteInt = new byte[MESSAGE_LENGTH_SIZE];
             for (int i = 0; i < MESSAGE_LENGTH_SIZE; ++i)
             {
-                byteInt[i] = (byte)(value & LOWEST_TWO_BYTES);
+                byteInt[i] = (byte)(value & LOWEST_BYTE);
                 value >>= EIGHT_BITS;
             }
             return byteInt;
@@ -54,7 +54,7 @@ namespace MazeNetClient.Network
             for (int i = MESSAGE_LENGTH_SIZE - 1; i >= 0; --i)
             {
                 value <<= EIGHT_BITS;
-                value |= (byteInt[i] & LOWEST_TWO_BYTES);
+                value |= (byteInt[i] & LOWEST_BYTE);
             }
             return value;
         }
@@ -65,8 +65,20 @@ namespace MazeNetClient.Network
             int totalNumberOfReadBytes = 0;
             while (totalNumberOfReadBytes != receiveLength)
             {
-                int numberOfReadBytes = stream.Read(buffer, totalNumberOfReadBytes, receiveLength);
-                totalNumberOfReadBytes += numberOfReadBytes;
+                try
+                {
+                    int numberOfReadBytes = stream.Read(buffer, totalNumberOfReadBytes, receiveLength);
+                    totalNumberOfReadBytes += numberOfReadBytes;
+                }
+                catch (System.Exception ex)
+                {
+                    //hier kommt nur ein teil der xml nachricht an.
+                    var temp = new byte[totalNumberOfReadBytes];
+                    System.Array.Copy(buffer, temp, temp.Length);
+                    string s = BytesToString(temp);
+
+                    var mazeObj = s.ConvertToMazeCom();
+                }
             }
             return buffer;
         }

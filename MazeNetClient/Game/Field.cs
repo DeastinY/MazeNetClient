@@ -9,6 +9,16 @@ namespace MazeNetClient.Game
     class Field
     {
         /// <summary>
+        /// Describes the index of the row, at that the field appears in a board.
+        /// </summary>
+        internal readonly int RowIndex;
+
+        /// <summary>
+        /// Describes the index of the column, at that the field appears in a board.
+        /// </summary>
+        internal readonly int ColumnIndex;
+
+        /// <summary>
         /// Indicates, whether the field is open on the left side.
         /// </summary>
         internal readonly bool IsLeftOpen;
@@ -48,8 +58,13 @@ namespace MazeNetClient.Game
         /// Creates and initializes a new instance of the type Field.
         /// </summary>
         /// <param name="xsdCardType">The cardType, from which the Field will be initialized.</param>
-        public Field(cardType xsdCardType)
+        /// <param name="rowIndex">The index of the row in a board.</param>
+        /// <param name="columnIndex">The index of the column in a board</param>
+        public Field(cardType xsdCardType, int rowIndex, int columnIndex)
         {
+            RowIndex = rowIndex;
+            ColumnIndex = columnIndex;
+
             var openings = xsdCardType.openings;
             IsLeftOpen = openings.left;
             IsTopOpen = openings.top;

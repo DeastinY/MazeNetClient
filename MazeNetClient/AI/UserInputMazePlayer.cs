@@ -16,42 +16,20 @@ namespace MazeNetClient.AI
             Logger.Write(value);
         }
 
-        public MoveMessageType PlayNextMove(Board currentField)
+        public Move PlayNextMove(Board currentBoard, int playerRowIndex, int playerColumnIndex, treasureType nextTreasure)
         {
-            //TODO: Frage: Was soll in diese nextMove.shiftCard variable rein?
-            MoveMessageType nextMove = new MoveMessageType();
-            nextMove.newPinPos = new positionType();
-            nextMove.shiftCard = new cardType();
-            nextMove.shiftPosition = new positionType();
-
             Write("Enter new shiftPosition (row,col): ");
             string input = GetInput();
-            int row = int.Parse(input[0].ToString());
-            int col = int.Parse(input[2].ToString());
-            nextMove.shiftPosition.row = row;
-            nextMove.shiftPosition.col = col;
-
-            var field = currentField.ShiftCard;
-            nextMove.shiftCard.openings = new cardTypeOpenings
-            {
-                bottom = field.IsBottomOpen,
-                left = field.IsLeftOpen,
-                top = field.IsTopOpen,
-                right = field.IsRightOpen
-            };
-            nextMove.shiftCard.pin = field.ContainingPlayers;
-            nextMove.shiftCard.treasure = field.Treasure;
-            nextMove.shiftCard.treasureSpecified = field.ContainsTreasure;
+            int rowShift = int.Parse(input[0].ToString());
+            int colShift = int.Parse(input[2].ToString());
 
 
             Write("Enter new pinposition (row,col): ");
             input = GetInput();
-            row = int.Parse(input[0].ToString());
-            col = int.Parse(input[2].ToString());
-            nextMove.newPinPos.row = row;
-            nextMove.newPinPos.col = col;
+            int rowPin = int.Parse(input[0].ToString());
+            int colPin = int.Parse(input[2].ToString());
 
-            return nextMove;
+            return new Move(rowPin, colPin, rowShift, colShift, "TODO: Hier kann eine rotation rein");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using MazeNetClient.XSDGenerated;
+﻿using MazeNetClient.Game;
+using MazeNetClient.XSDGenerated;
 
 namespace MazeNetClient.AI
 {
@@ -9,10 +10,13 @@ namespace MazeNetClient.AI
     {
         /// <summary>
         /// The artificial player receives the specified board, applies his algorithm
-        /// and returns a MoveMessageType, containing his next move.
+        /// and returns his next move.
         /// </summary>
-        /// <param name="currentField">The board, where the algorithm will be applied to.</param>
+        /// <param name="currentBoard">The board, where the algorithm will be applied to.</param>
+        /// <param name="playerRowIndex">The index of the row, where the player stands.</param>
+        /// <param name="playerColumnIndex">The index of the column, where the player stands.</param>
+        /// <param name="nextTreasure">Describes the treasure, that the player needs to get.</param>
         /// <returns>The result of the IMazePlayers next move.</returns>
-        MoveMessageType PlayNextMove(Game.Board currentField);
+        Move PlayNextMove(Board currentBoard, int playerRowIndex, int playerColumnIndex, treasureType nextTreasure);
     }
 }

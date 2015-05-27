@@ -1,7 +1,9 @@
 ﻿using MazeNetClient.AI;
+using MazeNetClient.Game;
 using MazeNetClient.Network;
 using MazeNetClient.XSDGenerated;
 using System.Diagnostics;
+using System.Linq;
 
 namespace MazeNetClient
 {
@@ -50,30 +52,31 @@ namespace MazeNetClient
         {
             var nextMessage = ReceiveMazeCom();
 
-            while (nextMessage.mcType != MazeComType.WIN) //TODO: Frage: Kommt ein MazeComType.DISCONNECT nur, wenn es Fehler bei der Anmeldung gibt, oder kann das auch wann anders, z.B. am Ende passieren?
+            while (nextMessage.mcType == MazeComType.AWAITMOVE)
             {
                 Debug.Assert(nextMessage.id == m_clientId);
-                Debug.Assert(nextMessage.mcType == MazeComType.AWAITMOVE);
 
                 var awaitMoveMessage = (AwaitMoveMessageType)nextMessage.Item;
-                var currentField = new Game.Board(awaitMoveMessage);
-                var nextMove = m_mazePlayer.PlayNextMove(currentField);
+                var nextTreasure = awaitMoveMessage.treasure;
+                var currentBoard = new Board(awaitMoveMessage);
 
-                SendMoveMessage(nextMove);
+                Debug.Assert(currentBoard.Count(f => f.ContainsPlayer(m_clientId)) == 1);
+                var fieldWithPlayer = currentBoard.First(f => f.ContainsPlayer(m_clientId));
+
+                var nextMove = m_mazePlayer.PlayNextMove(currentBoard, fieldWithPlayer.RowIndex, fieldWithPlayer.ColumnIndex, nextTreasure);
+                MoveMessageType moveMessage = new MoveMessageType
+                {
+                    newPinPos = new positionType { row = nextMove.NewPinPosRowIndex, col = nextMove.NewPinPosColumnIndex },
+                    shiftCard = awaitMoveMessage.board.shiftCard, /*//TODO: Frage Was soll ich hier hin tun?*/ // kann noch rotieren
+                    shiftPosition = new positionType { row = nextMove.ShiftPositionRowIndex, col = nextMove.ShiftPositionColumnIndex }
+                };
+
+                SendMoveMessage(moveMessage);
 
                 nextMessage = ReceiveMazeCom();
             }
 
-            //Handle the WinMessage
-            var winMessage = (WinMessageType)nextMessage.Item;
-            //TODO: Frage: Warum hat die winMessage einen member board?
-            var winnerId = winMessage.winner.id;
-            var winnerValue = winMessage.winner.Value;
-            Logger.WriteLine("WinMessage arrived! ID: " + winnerId + " Value: " + winnerValue);
-            if (winnerId == m_clientId)
-            {
-                Logger.WriteLine("SAUFEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEN!");
-            }
+            FinishGame(nextMessage);
         }
 
         private void SendMazeCom(MazeCom mazeComObject)
@@ -113,6 +116,27 @@ namespace MazeNetClient
             if (!acceptMessage.accept || acceptMessage.errorCode != ErrorType.NOERROR)
             {
                 Logger.WriteLine("AcceptMessage with error: " + acceptMessage.errorCode);
+            }
+        }
+
+        private void FinishGame(MazeCom finalMazeComMessage)
+        {
+            if (finalMazeComMessage.mcType == MazeComType.WIN)
+            {
+                //Handle the WinMessage
+                var winMessage = (WinMessageType)finalMazeComMessage.Item;
+                var winnerId = winMessage.winner.id;
+                var winnerValue = winMessage.winner.Value;
+                Logger.WriteLine("WinMessage arrived! ID: " + winnerId + " Value: " + winnerValue);
+                if (winnerId == m_clientId)
+                {
+                    Logger.WriteLine("SAUFEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEN!");
+                }
+            }
+            else
+            {
+                Debug.Assert(finalMazeComMessage.mcType == MazeComType.DISCONNECT);
+                Logger.WriteLine("Disconnected from server.");
             }
         }
     }
