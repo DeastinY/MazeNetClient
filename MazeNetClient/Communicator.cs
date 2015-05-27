@@ -57,9 +57,8 @@ namespace MazeNetClient
                 Debug.Assert(nextMessage.id == m_clientId);
 
                 var awaitMoveMessage = (AwaitMoveMessageType)nextMessage.Item;
-                //TODO: awaitMoveMessage now contains a member foundTreasures, but it isn't used yet.
                 var nextTreasure = awaitMoveMessage.treasure;
-                var currentBoard = new Board(awaitMoveMessage);
+                var currentBoard = new Board(awaitMoveMessage, m_clientId);
 
                 Debug.Assert(currentBoard.Count(f => f.ContainsPlayer(m_clientId)) == 1);
                 var fieldWithPlayer = currentBoard.First(f => f.ContainsPlayer(m_clientId));

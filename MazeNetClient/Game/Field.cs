@@ -60,25 +60,39 @@ namespace MazeNetClient.Game
         /// <param name="xsdCardType">The cardType, from which the Field will be initialized.</param>
         /// <param name="rowIndex">The index of the row in a board.</param>
         /// <param name="columnIndex">The index of the column in a board</param>
-        public Field(cardType xsdCardType, int rowIndex, int columnIndex)
+        internal Field(cardType xsdCardType, int rowIndex, int columnIndex)
+            : this(rowIndex, columnIndex, xsdCardType.openings.left, xsdCardType.openings.top, xsdCardType.openings.right,
+            xsdCardType.openings.bottom, xsdCardType.pin, xsdCardType.treasure, xsdCardType.treasureSpecified)
+        {
+        }
+
+        /// <summary>
+        /// Creates and initializes a new instance of the type Field.
+        /// </summary>
+        /// <param name="rowIndex">The index of the row where the field appears.</param>
+        /// <param name="columnIndex">The index of the column where the field appears.</param>
+        /// <param name="isLeftOpen">Indicates whether the field will be open on the left side.</param>
+        /// <param name="isTopOpen">Indicates whether the field will be open on the upper side.</param>
+        /// <param name="isRightOpen">Indicates whether the field will be open on the right side.</param>
+        /// <param name="isBottomOpen">Indicates whether the field will be open on the lower side.</param>
+        /// <param name="containingPlayers">An array of player-IDs that the field contains.</param>
+        /// <param name="treasure">The treasure that the field contains.</param>
+        /// <param name="isTreasureSpecified">Indicates whether the field contains a treasure.</param>
+        internal Field(int rowIndex, int columnIndex, bool isLeftOpen, bool isTopOpen, bool isRightOpen, bool isBottomOpen,
+            int[] containingPlayers, treasureType treasure, bool isTreasureSpecified)
         {
             RowIndex = rowIndex;
             ColumnIndex = columnIndex;
 
-            var openings = xsdCardType.openings;
-            IsLeftOpen = openings.left;
-            IsTopOpen = openings.top;
-            IsRightOpen = openings.right;
-            IsBottomOpen = openings.bottom;
+            IsLeftOpen = isLeftOpen;
+            IsTopOpen = isTopOpen;
+            IsRightOpen = isRightOpen;
+            IsBottomOpen = isBottomOpen;
 
-            var pin = xsdCardType.pin;
-            ContainingPlayers = new int[pin.Length];
-            Array.Copy(pin, ContainingPlayers, pin.Length);
+            ContainingPlayers = (int[])containingPlayers.Clone();
 
-            Treasure = xsdCardType.treasure;
-            ContainsTreasure = xsdCardType.treasureSpecified;
+            Treasure = treasure;
+            ContainsTreasure = isTreasureSpecified;
         }
-
-        //TODO: Frage: was ist das optional attribute in der boardtype->row[0]->
     }
 }

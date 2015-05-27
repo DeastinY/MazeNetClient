@@ -52,10 +52,26 @@ namespace MazeNetClient.Game
         internal readonly treasureType TreasureTarget;
 
         /// <summary>
+        /// Describes an array of all treasures that were found yet.
+        /// </summary>
+        internal readonly treasureType[] FoundTreasures;
+
+        /// <summary>
+        /// Describes the id of the player that we represent.
+        /// </summary>
+        internal readonly int PlayerId;
+
+        /// <summary>
+        /// Describes an array of pairs, where each element describes a pair of a player id and the number of treasures that he still needs to find.
+        /// </summary>
+        internal readonly TreasuresToGoType[] TreasuresToGo;
+
+        /// <summary>
         /// Creates and initializes a new instance of the Board type, depending on the specified AwaitMoveMessageType.
         /// </summary>
         /// <param name="currentGameStatus">The specified AwaitMoveMessageType, that contains data bout the board and the game status.</param>
-        internal Board(AwaitMoveMessageType currentGameStatus)
+        /// <param name="playerId">The id that we received from the server and that represents us.</param>
+        internal Board(AwaitMoveMessageType currentGameStatus, int playerId)
         {
             var currentBoard = currentGameStatus.board;
 
@@ -78,8 +94,6 @@ namespace MazeNetClient.Game
             var boardRows = currentBoard.row;
             for (int i = 0; i < boardRows.Length; ++i)
             {
-                System.Diagnostics.Debug.Assert(boardRows[i].OptionalAttirbute == null, "//TODO: Frage: Was soll dieses OptionalAttribute machen");
-
                 var boardColumns = boardRows[i].col;
                 for (int j = 0; j < boardColumns.Length; ++j)
                 {
@@ -87,9 +101,22 @@ namespace MazeNetClient.Game
                     m_fields[index] = new Field(boardColumns[j], i, j);
                 }
             }
-            
-            //TODO: Frage: currentGameStatus.treasuresToGo, sind das ein array von paaren, wobei das erste item angibt, welcher spieler gemeint ist, und im zweiten item, wie viele schätze er noch bruacht?!
-            //TODO: currentGameStatus.treasuresToGo berücksichtigen
+
+            var foundTreasures = currentGameStatus.foundTreasures ?? new treasureType[0];
+            FoundTreasures = (treasureType[])foundTreasures.Clone();
+
+            PlayerId = playerId;
+
+            var treasuresToGo = currentGameStatus.treasuresToGo;
+            TreasuresToGo = new TreasuresToGoType[treasuresToGo.Length];
+            for (int i = 0; i < treasuresToGo.Length; ++i)
+            {
+                TreasuresToGo[i] = new TreasuresToGoType
+                {
+                    player = treasuresToGo[i].player,
+                    treasures = treasuresToGo[i].treasures
+                };
+            }
         }
 
         internal Field this[int row, int column]
@@ -100,7 +127,9 @@ namespace MazeNetClient.Game
                 Debug.Assert(column >= 0 && column < COLUMN_COUNT);
 
                 int index = row * ROW_COUNT + column;
-                return m_fields[index];
+                var aField = m_fields[index];
+                Debug.Assert(aField.RowIndex == row && aField.ColumnIndex == column);
+                return aField;
             }
         }
 

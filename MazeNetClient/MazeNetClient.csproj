@@ -66,6 +66,8 @@
     <Compile Include="AI\Move.cs" />
     <Compile Include="AI\Rotation.cs" />
     <Compile Include="AI\SimpleMazePlayer.cs" />
+    <Compile Include="AI\ShiftSimulator.cs" />
+    <Compile Include="AI\SimulatedBoard.cs" />
     <Compile Include="AI\UserInputMazePlayer.cs" />
     <Compile Include="Communicator.cs" />
     <Compile Include="Game\Field.cs" />
