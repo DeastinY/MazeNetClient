@@ -1,5 +1,5 @@
-﻿using System.Diagnostics;
-using MazeNetClient.Game;
+﻿using MazeNetClient.Game;
+using System.Diagnostics;
 
 namespace MazeNetClient.AI
 {
