@@ -82,8 +82,7 @@ namespace MazeNetClient.Network
             }
             return buffer;
         }
-        //TODO: Kann man auch hingehen, und die MazeCom objekte in byte[] umwandeln und verschicken und andersrum? Dann spart man sich den schritt mit den strings?!
-        //TODO: Frage: Aber in der MazeNetServer - Anwendung machen die das auch so, warum?
+
         internal static void WriteUTF8(this NetworkStream stream, string message)
         {
             byte[] messageBuffer = StringToBytes(message);
@@ -92,6 +91,7 @@ namespace MazeNetClient.Network
 
             stream.Write(lengthBuffer, 0, lengthBuffer.Length);
             stream.Write(messageBuffer, 0, messageLength);
+            stream.Flush();
         }
 
         internal static string ReadUTF8(this NetworkStream stream)
