@@ -87,7 +87,7 @@ namespace MazeNetClient.Game
                     m_fields[index] = new Field(boardColumns[j], i, j);
                 }
             }
-
+            
             //TODO: Frage: currentGameStatus.treasuresToGo, sind das ein array von paaren, wobei das erste item angibt, welcher spieler gemeint ist, und im zweiten item, wie viele schätze er noch bruacht?!
             //TODO: currentGameStatus.treasuresToGo berücksichtigen
         }

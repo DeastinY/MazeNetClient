@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="AI\IMazePlayer.cs" />
     <Compile Include="AI\Move.cs" />
+    <Compile Include="AI\Rotation.cs" />
     <Compile Include="AI\SimpleMazePlayer.cs" />
     <Compile Include="AI\UserInputMazePlayer.cs" />
     <Compile Include="Communicator.cs" />

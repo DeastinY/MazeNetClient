@@ -156,6 +156,8 @@
 			<xs:element name="board" type="boardType" />
 			<xs:element name="treasuresToGo" type="TreasuresToGoType"
 				minOccurs="1" maxOccurs="4" />
+			<xs:element name="foundTreasures" type="treasureType"
+				minOccurs="0" maxOccurs="24" />
 			<xs:element name="treasure" type="treasureType" />
 		</xs:sequence>
 	</xs:complexType>
@@ -209,7 +211,7 @@
 		<xs:sequence>
 			<xs:element name="name" type="xs:string" minOccurs="1"
 				maxOccurs="1" />
-			<xs:element name="erroCode" type="ErrorType" minOccurs="1"
+			<xs:element name="errorCode" type="ErrorType" minOccurs="1"
 				maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>

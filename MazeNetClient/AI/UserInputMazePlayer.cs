@@ -29,7 +29,7 @@ namespace MazeNetClient.AI
             int rowPin = int.Parse(input[0].ToString());
             int colPin = int.Parse(input[2].ToString());
 
-            return new Move(rowPin, colPin, rowShift, colShift, "TODO: Hier kann eine rotation rein");
+            return new Move(rowPin, colPin, rowShift, colShift);
         }
     }
 }

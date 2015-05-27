@@ -57,6 +57,7 @@ namespace MazeNetClient
                 Debug.Assert(nextMessage.id == m_clientId);
 
                 var awaitMoveMessage = (AwaitMoveMessageType)nextMessage.Item;
+                //TODO: awaitMoveMessage now contains a member foundTreasures, but it isn't used yet.
                 var nextTreasure = awaitMoveMessage.treasure;
                 var currentBoard = new Board(awaitMoveMessage);
 
@@ -64,10 +65,13 @@ namespace MazeNetClient
                 var fieldWithPlayer = currentBoard.First(f => f.ContainsPlayer(m_clientId));
 
                 var nextMove = m_mazePlayer.PlayNextMove(currentBoard, fieldWithPlayer.RowIndex, fieldWithPlayer.ColumnIndex, nextTreasure);
+                var shiftCard = awaitMoveMessage.board.shiftCard;
+                ApplyRotation(shiftCard, nextMove.ShiftCardRotation);
+
                 MoveMessageType moveMessage = new MoveMessageType
                 {
                     newPinPos = new positionType { row = nextMove.NewPinPosRowIndex, col = nextMove.NewPinPosColumnIndex },
-                    shiftCard = awaitMoveMessage.board.shiftCard, /*//TODO: Frage Was soll ich hier hin tun?*/ // kann noch rotieren
+                    shiftCard = shiftCard,
                     shiftPosition = new positionType { row = nextMove.ShiftPositionRowIndex, col = nextMove.ShiftPositionColumnIndex }
                 };
 
@@ -112,10 +116,46 @@ namespace MazeNetClient
             var acceptMessage = (AcceptMessageType)mazeComAcceptMessage.Item;
             Debug.Assert(acceptMessage.accept && acceptMessage.errorCode == ErrorType.NOERROR);
 
-            //TODO: Frage: Aren't these information redundant? accept and errorCode == NOERROR?
             if (!acceptMessage.accept || acceptMessage.errorCode != ErrorType.NOERROR)
             {
                 Logger.WriteLine("AcceptMessage with error: " + acceptMessage.errorCode);
+            }
+        }
+
+        private void ApplyRotation(cardType shiftCard, AI.Rotation rotation)
+        {
+            var openings = shiftCard.openings;
+            var oldLeft = openings.left;
+            var oldTop = openings.top;
+            var oldRight = openings.right;
+            var oldBottom = openings.bottom;
+
+            switch (rotation)
+            {
+                case Rotation.DEGREE_0:
+                    //No rotation, nothing to do here.
+                    break;
+                case Rotation.DEGREE_90:
+                    openings.left = oldBottom;
+                    openings.top = oldLeft;
+                    openings.right = oldTop;
+                    openings.bottom = oldRight;
+                    break;
+                case Rotation.DEGREE_180:
+                    openings.left = oldRight;
+                    openings.top = oldBottom;
+                    openings.right = oldLeft;
+                    openings.bottom = oldTop;
+                    break;
+                case Rotation.DEGREE_270:
+                    openings.left = oldTop;
+                    openings.top = oldRight;
+                    openings.right = oldBottom;
+                    openings.bottom = oldLeft;
+                    break;
+                default:
+                    Debug.Assert(false, "Invalid value of enum rotation: " + rotation);
+                    break;
             }
         }
 

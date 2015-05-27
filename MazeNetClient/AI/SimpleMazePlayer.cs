@@ -17,7 +17,7 @@ namespace MazeNetClient.AI
                 int shiftRow, shiftColumn;
                 GetShiftPosition(out shiftRow, out shiftColumn, currentBoard, fieldWithNextTreasure.RowIndex, fieldWithNextTreasure.ColumnIndex);
                 Logger.WriteLine("FOUND TREASURE: ");
-                return new Move(fieldWithNextTreasure.RowIndex, fieldWithNextTreasure.ColumnIndex, shiftRow, shiftColumn, "//TODO: Hier muss eine rotation rein?");
+                return new Move(fieldWithNextTreasure.RowIndex, fieldWithNextTreasure.ColumnIndex, shiftRow, shiftColumn);
             }
             else
             {
@@ -44,7 +44,7 @@ namespace MazeNetClient.AI
                 shiftRow = GetShiftRowIndex(currentBoard, playerRowIndex, PRI);
                 Logger.WriteLine(shiftRow.ToString());
 
-                return new Move(PRI, PCI, shiftRow, shiftColumn, "//TODO: Hier muss eine rotation rein?");
+                return new Move(PRI, PCI, shiftRow, shiftColumn);
             }
         }
 

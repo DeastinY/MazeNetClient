@@ -138,7 +138,7 @@ namespace MazeNetClient.XSDGenerated {
         
         private string nameField;
         
-        private ErrorType erroCodeField;
+        private ErrorType errorCodeField;
         
         /// <remarks/>
         public string name {
@@ -151,12 +151,12 @@ namespace MazeNetClient.XSDGenerated {
         }
         
         /// <remarks/>
-        public ErrorType erroCode {
+        public ErrorType errorCode {
             get {
-                return this.erroCodeField;
+                return this.errorCodeField;
             }
             set {
-                this.erroCodeField = value;
+                this.errorCodeField = value;
             }
         }
     }
@@ -632,6 +632,8 @@ namespace MazeNetClient.XSDGenerated {
         
         private TreasuresToGoType[] treasuresToGoField;
         
+        private treasureType[] foundTreasuresField;
+        
         private treasureType treasureField;
         
         /// <remarks/>
@@ -652,6 +654,17 @@ namespace MazeNetClient.XSDGenerated {
             }
             set {
                 this.treasuresToGoField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("foundTreasures")]
+        public treasureType[] foundTreasures {
+            get {
+                return this.foundTreasuresField;
+            }
+            set {
+                this.foundTreasuresField = value;
             }
         }
         

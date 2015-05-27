@@ -14,17 +14,15 @@ namespace MazeNetClient.AI
 
         internal readonly int ShiftPositionColumnIndex;
 
-        internal readonly object Rotationtype;
+        internal readonly Rotation ShiftCardRotation;
 
-        internal Move(int newPinPosRowIndex, int newPinPosColumnIndex, int shiftPositionRowIndex, int shiftPositionColumnIndex, object rotationType)
+        internal Move(int newPinPosRowIndex, int newPinPosColumnIndex, int shiftPositionRowIndex, int shiftPositionColumnIndex, Rotation shiftCardRotation = Rotation.DEGREE_0)
         {
             NewPinPosRowIndex = newPinPosRowIndex;
             NewPinPosColumnIndex = newPinPosColumnIndex;
             ShiftPositionRowIndex = shiftPositionRowIndex;
             ShiftPositionColumnIndex = shiftPositionColumnIndex;
-            Rotationtype = rotationType;
+            ShiftCardRotation = shiftCardRotation;
         }
-
-        //TODO: Ich muss die erhaltene shiftcard genauso zurückschicken, nur mit der rotation eingebaut.
     }
 }
