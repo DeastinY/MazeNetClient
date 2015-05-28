@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace MazeNetClient.AI
 {
@@ -69,5 +70,7 @@ namespace MazeNetClient.AI
                 container.Add(aSimulatedBoard);
             }
         }
+
+        
     }
 }
