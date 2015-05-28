@@ -63,22 +63,17 @@ namespace MazeNetClient.Network
         {
             byte[] buffer = new byte[receiveLength];
             int totalNumberOfReadBytes = 0;
-            while (totalNumberOfReadBytes != receiveLength)
+            try
             {
-                try
+                while (totalNumberOfReadBytes != receiveLength)
                 {
                     int numberOfReadBytes = stream.Read(buffer, totalNumberOfReadBytes, receiveLength);
                     totalNumberOfReadBytes += numberOfReadBytes;
                 }
-                catch (System.Exception ex)
-                {
-                    //hier kommt nur ein teil der xml nachricht an.
-                    var temp = new byte[totalNumberOfReadBytes];
-                    System.Array.Copy(buffer, temp, temp.Length);
-                    string s = BytesToString(temp);
-
-                    var mazeObj = s.ConvertToMazeCom();
-                }
+            }
+            catch (System.Exception ex)
+            {
+                Logger.ShowException(ex);
             }
             return buffer;
         }

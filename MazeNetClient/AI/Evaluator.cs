@@ -1,9 +1,6 @@
-﻿using System;
+﻿using MazeNetClient.Game;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MazeNetClient.Game;
 
 namespace MazeNetClient.AI
 {
@@ -16,7 +13,7 @@ namespace MazeNetClient.AI
             foreach (SimulatedBoard sb in container)
             {
                 List<Field> posFields = sb.GetReachableFields(sb.PlayerPositionRowIndex, sb.PlayerPositionColumnIndex);
-                Tuple<Move, float> temp = strategy.GetBestMove(sb,posFields);
+                Tuple<Move, float> temp = strategy.GetBestMove(sb, posFields);
                 moves.Add(temp);
             }
 

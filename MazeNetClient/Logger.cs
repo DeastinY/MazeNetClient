@@ -58,7 +58,7 @@ namespace MazeNetClient
         {
             var previousColor = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;
-            WriteLine(ex.Message, writeToFile);
+            WriteLine(ex.ToString(), writeToFile);
             Console.ForegroundColor = previousColor;
         }
 
