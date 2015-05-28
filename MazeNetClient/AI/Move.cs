@@ -47,7 +47,12 @@ namespace MazeNetClient.AI
             Debug.Assert(newPinPosColumnIndex >= 0 && newPinPosColumnIndex < Board.COLUMN_COUNT);
             Debug.Assert(shiftPositionRowIndex >= 0 && shiftPositionRowIndex < Board.ROW_COUNT);
             Debug.Assert(shiftPositionColumnIndex >= 0 && shiftPositionColumnIndex < Board.COLUMN_COUNT);
-            Debug.Assert(((shiftPositionRowIndex % 2 == 1) && (shiftPositionColumnIndex == 0)) || (shiftPositionRowIndex == 0) && (shiftPositionColumnIndex % 2 == 1));
+            Debug.Assert(
+                ((shiftPositionRowIndex % 2 == 1) && (shiftPositionColumnIndex == 0))
+                || ((shiftPositionRowIndex % 2 == 1) && (shiftPositionColumnIndex == Board.COLUMN_COUNT - 1))
+                || ((shiftPositionRowIndex == 0) && (shiftPositionColumnIndex % 2 == 1))
+                || ((shiftPositionRowIndex == Board.ROW_COUNT - 1) && (shiftPositionColumnIndex % 2 == 1)));
+
             Debug.Assert(System.Enum.IsDefined(typeof(Rotation), shiftCardRotation));
 
             NewPinPosRowIndex = newPinPosRowIndex;
