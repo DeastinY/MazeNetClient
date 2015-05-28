@@ -1,41 +1,59 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MazeNetClient.Game;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace MazeNetClient.AI
 {
-    class StupidRating :IRatingStrategy
+    class StupidRating : IRatingStrategy
     {
-        private SimulatedBoard board;
-        public Tuple<Move, float> GetBestMove(SimulatedBoard board, List<Field> moves)
+        public Tuple<Move, float> GetBestMove(SimulatedBoard board, List<Field> reachableFields)
         {
-            this.board = board;
-            Field bestField = null;
-            float bestRating = 0f;
+            float result = 0.0f;
+            Move move = null;
 
-            foreach(Field f in moves)
+            if (reachableFields.Count == 0)
             {
-                float rating = this.RateMove(f);
+                move = new Move(board.PlayerPositionRowIndex, board.PlayerPositionColumnIndex,
+                    board.ShiftPositionRowIndex, board.ShiftPositionColumnIndex, board.ShiftCardRotation);
+            }
+            else
+            {
+                Field newField = null;
 
-                if(rating>bestRating)
+                var foundTreasure = reachableFields.FirstOrDefault(fi => fi.ContainsTreasure && fi.Treasure == board.TreasureTarget);
+                if (foundTreasure != null)
                 {
-                    bestField = f;
-                    bestRating = rating;
+                    newField = foundTreasure;
+                    result = 1.0f;
                 }
+                else
+                {
+                    float maxDist = -1;
+                    foreach (var aField in reachableFields)
+                    {
+                        var dist = Distance(aField, board.PlayerPositionRowIndex, board.PlayerPositionColumnIndex);
+                        if (dist > maxDist)
+                        {
+                            maxDist = dist;
+                            newField = aField;
+                        }
+                    }
+
+                    result = 1.0f - 1.0f / reachableFields.Count;
+                }
+
+                move = new Move(newField.RowIndex, newField.ColumnIndex, board.ShiftPositionRowIndex, board.ShiftPositionColumnIndex, board.ShiftCardRotation);
             }
 
-            Move move = new Move(bestField.RowIndex, bestField.ColumnIndex,
-                board.ShiftPositionRowIndex, board.ShiftPositionColumnIndex, board.ShiftCardRotation);
-            return Tuple.Create(move, bestRating);
+            return Tuple.Create(move, result);
         }
 
-        private float RateMove(Field move)
+        float Distance(Field field, int toRowIndex, int toColumnIndex)
         {
-            Random r = new Random();
-            return (float) r.NextDouble();
+            return (float)
+                Math.Sqrt(Math.Pow(Math.Abs(field.RowIndex - toRowIndex), 2) +
+                Math.Pow(Math.Abs(field.ColumnIndex - toColumnIndex), 2));
         }
     }
 }
