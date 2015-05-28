@@ -58,6 +58,11 @@ namespace MazeNetClient.AI
         internal readonly TreasuresToGoType[] TreasuresToGo;
 
         /// <summary>
+        /// Describes the treasure, that the player needs to collect next.
+        /// </summary>
+        internal readonly treasureType TreasureTarget;
+
+        /// <summary>
         /// Creates and initializes a new instance of the type SimulatedBoard.
         /// </summary>
         /// <param name="actualBoard">The initial board where the shift will be simulated on.</param>
@@ -78,13 +83,15 @@ namespace MazeNetClient.AI
                 var aTreasureToGo = actualBoard.TreasuresToGo[i];
                 TreasuresToGo[i] = new TreasuresToGoType { player = aTreasureToGo.player, treasures = aTreasureToGo.treasures };
             }
+            TreasureTarget = actualBoard.TreasureTarget;
 
-
-            InsertShiftCard(actualBoard.ShiftCard, shiftCardRotation, shiftPositionRowIndex, shiftPositionColumnIndex);
+            //This variable describes the player ids, that were kicked out of the game by inserting the shift card.
+            //They have to be inserted in the shift card.
+            int[] kickedPlayers = null;
 
             if (InsertInRowFromLeft(shiftPositionRowIndex, shiftPositionColumnIndex))
             {
-                Debug.Assert(this[shiftPositionRowIndex, 0] != null);
+                kickedPlayers = actualBoard[shiftPositionRowIndex, Board.COLUMN_COUNT - 1].ContainingPlayers;
 
                 for (int j = 1; j < Board.COLUMN_COUNT; ++j)
                 {
@@ -95,7 +102,7 @@ namespace MazeNetClient.AI
             }
             else if (InsertInRowFromRight(shiftPositionRowIndex, shiftPositionColumnIndex))
             {
-                Debug.Assert(this[shiftPositionRowIndex, Board.COLUMN_COUNT - 1] != null);
+                kickedPlayers = actualBoard[shiftPositionRowIndex, 0].ContainingPlayers;
 
                 for (int j = 0; j < Board.COLUMN_COUNT - 1; ++j)
                 {
@@ -106,7 +113,7 @@ namespace MazeNetClient.AI
             }
             else if (InsertInColumnFromTop(shiftPositionRowIndex, shiftPositionColumnIndex))
             {
-                Debug.Assert(this[0, shiftPositionColumnIndex] != null);
+                kickedPlayers = actualBoard[Board.ROW_COUNT - 1, shiftPositionColumnIndex].ContainingPlayers;
 
                 for (int i = 1; i < Board.ROW_COUNT; ++i)
                 {
@@ -118,7 +125,7 @@ namespace MazeNetClient.AI
             }
             else if (InsertInColumnFromBottom(shiftPositionRowIndex, shiftPositionColumnIndex))
             {
-                Debug.Assert(this[Board.ROW_COUNT - 1, shiftPositionColumnIndex] != null);
+                kickedPlayers = actualBoard[0, shiftPositionColumnIndex].ContainingPlayers;
 
                 for (int i = 0; i < Board.ROW_COUNT - 1; ++i)
                 {
@@ -131,6 +138,8 @@ namespace MazeNetClient.AI
             {
                 Debug.Assert(false, "This code should not be reached!");
             }
+
+            InsertShiftCard(actualBoard.ShiftCard, shiftCardRotation, shiftPositionRowIndex, shiftPositionColumnIndex, kickedPlayers);
 
             //Fill up the m_fields with all fields, that are not infected by the shift operation (and therefore still null).
             for (int i = 0; i < Board.ROW_COUNT; ++i)
@@ -152,6 +161,7 @@ namespace MazeNetClient.AI
             }
 
 
+            Debug.Assert(m_fields.Count(f => f.ContainsPlayer(PlayerId)) == 1);
             var playerField = m_fields.First(f => f.ContainsPlayer(PlayerId));
             PlayerPositionRowIndex = playerField.RowIndex;
             PlayerPositionColumnIndex = playerField.ColumnIndex;
@@ -184,7 +194,7 @@ namespace MazeNetClient.AI
             return GetEnumerator();
         }
 
-        private void InsertShiftCard(Field from, Rotation rotation, int shiftPositionRowIndex, int shiftPositionColumnIndex)
+        private void InsertShiftCard(Field from, Rotation rotation, int shiftPositionRowIndex, int shiftPositionColumnIndex, int[] containingPlayers)
         {
             bool isLeftOpen = false,
                  isTopOpen = false,
@@ -222,8 +232,9 @@ namespace MazeNetClient.AI
                     break;
             }
 
+
             var shiftCard = new Field(shiftPositionRowIndex, shiftPositionColumnIndex, isLeftOpen, isTopOpen, isRightOpen, isBottomOpen,
-                from.ContainingPlayers, from.Treasure, from.ContainsTreasure);
+                (int[])containingPlayers.Clone(), from.Treasure, from.ContainsTreasure);
 
             int shiftCard1DIndex = shiftPositionRowIndex * Board.ROW_COUNT + shiftPositionColumnIndex;
             m_fields[shiftCard1DIndex] = shiftCard;
