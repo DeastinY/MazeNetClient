@@ -9,7 +9,7 @@ namespace MazeNetClient.Game
     /// A board consist of 7 times 7 fields, a shift card, a forbidden shifting place
     /// and the information about the next treasures position.
     /// </summary>
-    class Board : IEnumerable<Field>
+    class Board : IEnumerable<Field>, IFieldCollection
     {
         /// <summary>
         /// This is the number of rows, that the playing board has.
@@ -119,7 +119,7 @@ namespace MazeNetClient.Game
             }
         }
 
-        internal Field this[int row, int column]
+        public Field this[int row, int column]
         {
             get
             {

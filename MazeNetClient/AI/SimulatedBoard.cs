@@ -10,7 +10,7 @@ namespace MazeNetClient.AI
     /// This class creates a new board, based on an existing board and applies a shift operation on that new board.
     /// This class is used for simulating all possible shift operations on the current board and analyze the results.
     /// </summary>
-    class SimulatedBoard : IEnumerable<Field>
+    class SimulatedBoard : IEnumerable<Field>, IFieldCollection
     {
         /// <summary>
         /// Holds the fields of the simulated board.
@@ -82,8 +82,6 @@ namespace MazeNetClient.AI
 
             InsertShiftCard(actualBoard.ShiftCard, shiftCardRotation, shiftPositionRowIndex, shiftPositionColumnIndex);
 
-            Field fieldWithPlayer = actualBoard.First(f => f.ContainsPlayer(actualBoard.PlayerId));
-
             if (InsertInRowFromLeft(shiftPositionRowIndex, shiftPositionColumnIndex))
             {
                 Debug.Assert(this[shiftPositionRowIndex, 0] != null);
@@ -93,11 +91,6 @@ namespace MazeNetClient.AI
                     int index = shiftPositionRowIndex * Board.COLUMN_COUNT + j;
                     var boardField = actualBoard[shiftPositionRowIndex, j - 1];
                     m_fields[index] = CreateCopy(boardField, shiftPositionRowIndex, j);
-                    if (boardField == fieldWithPlayer)
-                    {
-                        this.PlayerPositionRowIndex = shiftPositionRowIndex;
-                        this.PlayerPositionColumnIndex = j;
-                    }
                 }
             }
             else if (InsertInRowFromRight(shiftPositionRowIndex, shiftPositionColumnIndex))
@@ -109,11 +102,6 @@ namespace MazeNetClient.AI
                     int index = shiftPositionRowIndex * Board.COLUMN_COUNT + j;
                     var boardField = actualBoard[shiftPositionRowIndex, j + 1];
                     m_fields[index] = CreateCopy(boardField, shiftPositionRowIndex, j);
-                    if (boardField == fieldWithPlayer)
-                    {
-                        this.PlayerPositionRowIndex = shiftPositionRowIndex;
-                        this.PlayerPositionColumnIndex = j;
-                    }
                 }
             }
             else if (InsertInColumnFromTop(shiftPositionRowIndex, shiftPositionColumnIndex))
@@ -125,11 +113,6 @@ namespace MazeNetClient.AI
                     int index = i * Board.COLUMN_COUNT + shiftPositionColumnIndex;
                     var boardField = actualBoard[i - 1, shiftPositionColumnIndex];
                     m_fields[index] = CreateCopy(boardField, i, shiftPositionColumnIndex);
-                    if (boardField == fieldWithPlayer)
-                    {
-                        this.PlayerPositionRowIndex = i;
-                        this.PlayerPositionColumnIndex = shiftPositionColumnIndex;
-                    }
                 }
 
             }
@@ -142,11 +125,6 @@ namespace MazeNetClient.AI
                     int index = i * Board.COLUMN_COUNT + shiftPositionColumnIndex;
                     var boardField = actualBoard[i + 1, shiftPositionColumnIndex];
                     m_fields[index] = CreateCopy(boardField, i, shiftPositionColumnIndex);
-                    if (boardField == fieldWithPlayer)
-                    {
-                        this.PlayerPositionRowIndex = i;
-                        this.PlayerPositionColumnIndex = shiftPositionColumnIndex;
-                    }
                 }
             }
             else
@@ -165,11 +143,6 @@ namespace MazeNetClient.AI
                         var boardField = actualBoard[i, j];
                         Debug.Assert(boardField.RowIndex == i && boardField.ColumnIndex == j);
                         m_fields[index] = CreateCopy(boardField, i, j);
-                        if (boardField == fieldWithPlayer)
-                        {
-                            this.PlayerPositionRowIndex = i;
-                            this.PlayerPositionColumnIndex = j;
-                        }
                     }
                     else
                     {
@@ -179,14 +152,12 @@ namespace MazeNetClient.AI
             }
 
 
-            var count = this.m_fields.Count(f => f.ContainsPlayer(actualBoard.PlayerId));
-            Debug.Assert(count == 1);
-            var first = this.m_fields.First(f => f.ContainsPlayer(actualBoard.PlayerId));
-            Debug.Assert(first.RowIndex == PlayerPositionRowIndex && first.ColumnIndex == PlayerPositionColumnIndex);
-            Debug.Assert(this[PlayerPositionRowIndex, PlayerPositionColumnIndex] == first);
+            var playerField = m_fields.First(f => f.ContainsPlayer(PlayerId));
+            PlayerPositionRowIndex = playerField.RowIndex;
+            PlayerPositionColumnIndex = playerField.ColumnIndex;
         }
 
-        internal Field this[int row, int column]
+        public Field this[int row, int column]
         {
             get
             {

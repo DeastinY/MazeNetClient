@@ -21,7 +21,7 @@ namespace MazeNetClient.Game
         /// <param name="rowIndex">The index of the row, from where you start.</param>
         /// <param name="columnIndex">The index of the column, from where you start.</param>
         /// <returns>A list of reachable fields, excluding the field at the position from where you start.</returns>
-        internal static List<Field> GetReachableFields(this Board board, int rowIndex, int columnIndex)
+        internal static List<Field> GetReachableFields(this IFieldCollection board, int rowIndex, int columnIndex)
         {
             List<Field> reachableFields = new List<Field>();
 
@@ -30,7 +30,7 @@ namespace MazeNetClient.Game
             return reachableFields;
         }
 
-        static void GetReachableFieldsRecursive(List<Field> basket, Board board, int rowIndex, int columnIndex, Direction fromDirection)
+        static void GetReachableFieldsRecursive(List<Field> basket, IFieldCollection board, int rowIndex, int columnIndex, Direction fromDirection)
         {
             if (fromDirection != Direction.Left)
             {
@@ -96,7 +96,7 @@ namespace MazeNetClient.Game
         /// <param name="rowIndex">The index of the row, where you are currently.</param>
         /// <param name="columnIndex">The index of the column, where you are currently.</param>
         /// <returns>True, if you can go left, false otherwise.</returns>
-        internal static bool CanGoLeft(this Board board, int rowIndex, int columnIndex)
+        internal static bool CanGoLeft(this IFieldCollection board, int rowIndex, int columnIndex)
         {
             if (columnIndex > 0)
             {
@@ -113,7 +113,7 @@ namespace MazeNetClient.Game
         /// <param name="rowIndex">The index of the row, where you are currently.</param>
         /// <param name="columnIndex">The index of the column, where you are currently.</param>
         /// <returns>True, if you can go up, false otherwise.</returns>
-        internal static bool CanGoUp(this Board board, int rowIndex, int columnIndex)
+        internal static bool CanGoUp(this IFieldCollection board, int rowIndex, int columnIndex)
         {
             if (rowIndex > 0)
             {
@@ -130,7 +130,7 @@ namespace MazeNetClient.Game
         /// <param name="rowIndex">The index of the row, where you are currently.</param>
         /// <param name="columnIndex">The index of the column, where you are currently.</param>
         /// <returns>True, if you can go right, false otherwise.</returns>
-        internal static bool CanGoRight(this Board board, int rowIndex, int columnIndex)
+        internal static bool CanGoRight(this IFieldCollection board, int rowIndex, int columnIndex)
         {
             if (columnIndex + 1 < Board.COLUMN_COUNT)
             {
@@ -147,7 +147,7 @@ namespace MazeNetClient.Game
         /// <param name="rowIndex">The index of the row, where you are currently.</param>
         /// <param name="columnIndex">The index of the column, where you are currently.</param>
         /// <returns>True, if you can go down, false otherwise.</returns>
-        internal static bool CanGoDown(this Board board, int rowIndex, int columnIndex)
+        internal static bool CanGoDown(this IFieldCollection board, int rowIndex, int columnIndex)
         {
             if (rowIndex + 1 < Board.ROW_COUNT)
             {
