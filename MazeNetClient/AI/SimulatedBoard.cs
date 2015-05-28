@@ -48,13 +48,6 @@ namespace MazeNetClient.AI
         internal readonly int PlayerPositionColumnIndex;
 
         /// <summary>
-        /// Indicating a value, whether this SimulatedBoard still contains our player.
-        /// This value will always be true except when the applied shift kicks the card from the board
-        /// that contained the player.
-        /// </summary>
-        internal readonly bool ContainsPlayer;
-
-        /// <summary>
         /// Holds all treasures that are already found.
         /// </summary>
         internal readonly treasureType[] FoundTreasures;
@@ -159,16 +152,9 @@ namespace MazeNetClient.AI
             }
 
 
-            var playerField = m_fields.FirstOrDefault(f => f.ContainsPlayer(PlayerId));
-            if (ContainsPlayer = (playerField == null))
-            {
-                PlayerPositionRowIndex = PlayerPositionColumnIndex = -1;
-            }
-            else
-            {
-                PlayerPositionRowIndex = playerField.RowIndex;
-                PlayerPositionColumnIndex = playerField.ColumnIndex;
-            }
+            var playerField = m_fields.First(f => f.ContainsPlayer(PlayerId));
+            PlayerPositionRowIndex = playerField.RowIndex;
+            PlayerPositionColumnIndex = playerField.ColumnIndex;
         }
 
         public Field this[int row, int column]
