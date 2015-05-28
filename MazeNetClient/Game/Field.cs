@@ -6,6 +6,7 @@ namespace MazeNetClient.Game
     /// <summary>
     /// Defines a single field into a board.
     /// </summary>
+    [System.Diagnostics.DebuggerDisplay("Row: {RowIndex}, Column: {ColumnIndex}")]
     class Field
     {
         /// <summary>

@@ -3,3 +3,4 @@ MazeNetClient/obj/*
 *.suo
 *.pyc
 MonteCarlPY/.idea/*
+MazeNetClient/MazeNetClient.csproj.user
