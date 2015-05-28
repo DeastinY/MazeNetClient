@@ -86,7 +86,9 @@ namespace MazeNetClient
             Debug.Assert(currentBoard.Count(f => f.ContainsPlayer(m_clientId)) == 1);
             var fieldWithPlayer = currentBoard.First(f => f.ContainsPlayer(m_clientId));
 
-            var nextMove = m_mazePlayer.PlayNextMove(currentBoard, fieldWithPlayer.RowIndex, fieldWithPlayer.ColumnIndex, currentBoard.TreasureTarget);
+            //var nextMove = m_mazePlayer.PlayNextMove(currentBoard, fieldWithPlayer.RowIndex, fieldWithPlayer.ColumnIndex, currentBoard.TreasureTarget);
+            var simulatedBoards = AI.ShiftSimulator.GeneratePossibleBoards(currentBoard);
+            var nextMove = Evaluator.GetBestMove(simulatedBoards, new AI.StupidEvaluation());
 
             ApplyRotation(shiftCard, nextMove.ShiftCardRotation);
 
