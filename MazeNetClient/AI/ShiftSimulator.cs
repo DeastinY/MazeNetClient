@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace MazeNetClient.AI
 {
@@ -58,19 +57,19 @@ namespace MazeNetClient.AI
 
         static bool IsValidShiftPosition(Board currentBoard, int shiftPositionRowIndex, int shiftPositionColumnIndex)
         {
-            return currentBoard.ShiftCard.RowIndex != shiftPositionRowIndex
-                && currentBoard.ShiftCard.ColumnIndex != shiftPositionColumnIndex;
+            return currentBoard.ForbiddenShiftRow != shiftPositionRowIndex
+                || currentBoard.ForbiddenShiftColumn != shiftPositionColumnIndex;
         }
 
         static void AddAllShiftRotations(List<SimulatedBoard> container, Board currentBoard, int shiftCardPositionRowIndex, int shiftCardPositionColumnIndex)
         {
+            Debug.Assert(currentBoard.ForbiddenShiftRow != shiftCardPositionRowIndex || currentBoard.ForbiddenShiftColumn != shiftCardPositionColumnIndex);
+
             foreach (Rotation aRotation in Enum.GetValues(typeof(Rotation)))
             {
                 var aSimulatedBoard = new SimulatedBoard(currentBoard, shiftCardPositionRowIndex, shiftCardPositionColumnIndex, aRotation);
                 container.Add(aSimulatedBoard);
             }
         }
-
-        
     }
 }
