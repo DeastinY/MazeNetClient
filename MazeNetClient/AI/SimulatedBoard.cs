@@ -18,6 +18,26 @@ namespace MazeNetClient.AI
         private readonly Field[] m_fields;
 
         /// <summary>
+        /// The index of the row where we inserted the shift card to get from the actual board to this SimulatedBoard.
+        /// </summary>
+        internal readonly int ShiftPositionRowIndex;
+
+        /// <summary>
+        /// The index of the column where we inserted the shift card to get from the actual board to this SimulatedBoard.
+        /// </summary>
+        internal readonly int ShiftPositionColumnIndex;
+
+        /// <summary>
+        /// The rotation that we applied to the shift card before we inserted it in this SimulatedBoard.
+        /// </summary>
+        internal readonly Rotation ShiftCardRotation;
+
+        /// <summary>
+        /// Describes the id of the player that we represent.
+        /// </summary>
+        internal readonly int PlayerId;
+
+        /// <summary>
         /// Holds the index of the row where the player appears in the simulated board.
         /// </summary>
         internal readonly int PlayerPositionRowIndex;
@@ -28,15 +48,37 @@ namespace MazeNetClient.AI
         internal readonly int PlayerPositionColumnIndex;
 
         /// <summary>
+        /// Holds all treasures that are already found.
+        /// </summary>
+        internal readonly treasureType[] FoundTreasures;
+
+        /// <summary>
+        /// Describes an array of pairs, where each element describes a pair of a player id and the number of treasures that he still needs to find.
+        /// </summary>
+        internal readonly TreasuresToGoType[] TreasuresToGo;
+
+        /// <summary>
         /// Creates and initializes a new instance of the type SimulatedBoard.
         /// </summary>
-        /// <param name="actualBoard"></param>
-        /// <param name="shiftPositionRowIndex"></param>
-        /// <param name="shiftPositionColumnIndex"></param>
-        /// <param name="shiftCardRotation"></param>
+        /// <param name="actualBoard">The initial board where the shift will be simulated on.</param>
+        /// <param name="shiftPositionRowIndex">The index of the row where the shift card will be inserted.</param>
+        /// <param name="shiftPositionColumnIndex">The index of the column where the shift card will be inserted.</param>
+        /// <param name="shiftCardRotation">The rotation that will be applied to the shift card.</param>
         internal SimulatedBoard(Board actualBoard, int shiftPositionRowIndex, int shiftPositionColumnIndex, Rotation shiftCardRotation)
         {
             m_fields = new Field[Board.ROW_COUNT * Board.COLUMN_COUNT];
+            ShiftPositionRowIndex = shiftPositionRowIndex;
+            ShiftPositionColumnIndex = shiftPositionColumnIndex;
+            ShiftCardRotation = shiftCardRotation;
+            PlayerId = actualBoard.PlayerId;
+            FoundTreasures = (treasureType[])actualBoard.FoundTreasures.Clone();
+            TreasuresToGo = new TreasuresToGoType[actualBoard.TreasuresToGo.Length];
+            for (int i = 0; i < TreasuresToGo.Length; ++i)
+            {
+                var aTreasureToGo = actualBoard.TreasuresToGo[i];
+                TreasuresToGo[i] = new TreasuresToGoType { player = aTreasureToGo.player, treasures = aTreasureToGo.treasures };
+            }
+
 
             InsertShiftCard(actualBoard.ShiftCard, shiftCardRotation, shiftPositionRowIndex, shiftPositionColumnIndex);
 

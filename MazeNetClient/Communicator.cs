@@ -57,24 +57,10 @@ namespace MazeNetClient
                 Debug.Assert(nextMessage.id == m_clientId);
 
                 var awaitMoveMessage = (AwaitMoveMessageType)nextMessage.Item;
-                var nextTreasure = awaitMoveMessage.treasure;
                 var currentBoard = new Board(awaitMoveMessage, m_clientId);
+                var nextMove = GenerateNextMove(currentBoard, awaitMoveMessage.board.shiftCard);
 
-                Debug.Assert(currentBoard.Count(f => f.ContainsPlayer(m_clientId)) == 1);
-                var fieldWithPlayer = currentBoard.First(f => f.ContainsPlayer(m_clientId));
-
-                var nextMove = m_mazePlayer.PlayNextMove(currentBoard, fieldWithPlayer.RowIndex, fieldWithPlayer.ColumnIndex, nextTreasure);
-                var shiftCard = awaitMoveMessage.board.shiftCard;
-                ApplyRotation(shiftCard, nextMove.ShiftCardRotation);
-
-                MoveMessageType moveMessage = new MoveMessageType
-                {
-                    newPinPos = new positionType { row = nextMove.NewPinPosRowIndex, col = nextMove.NewPinPosColumnIndex },
-                    shiftCard = shiftCard,
-                    shiftPosition = new positionType { row = nextMove.ShiftPositionRowIndex, col = nextMove.ShiftPositionColumnIndex }
-                };
-
-                SendMoveMessage(moveMessage);
+                SendMoveMessage(nextMove);
 
                 nextMessage = ReceiveMazeCom();
             }
@@ -93,6 +79,24 @@ namespace MazeNetClient
             var stringMessage = m_connection.ReceiveMessage();
             var mazeComObject = stringMessage.ConvertToMazeCom();
             return mazeComObject;
+        }
+
+        private MoveMessageType GenerateNextMove(Board currentBoard, cardType shiftCard)
+        {
+            Debug.Assert(currentBoard.Count(f => f.ContainsPlayer(m_clientId)) == 1);
+            var fieldWithPlayer = currentBoard.First(f => f.ContainsPlayer(m_clientId));
+
+            var nextMove = m_mazePlayer.PlayNextMove(currentBoard, fieldWithPlayer.RowIndex, fieldWithPlayer.ColumnIndex, currentBoard.TreasureTarget);
+
+            ApplyRotation(shiftCard, nextMove.ShiftCardRotation);
+
+            MoveMessageType moveMessage = new MoveMessageType
+            {
+                newPinPos = new positionType { row = nextMove.NewPinPosRowIndex, col = nextMove.NewPinPosColumnIndex },
+                shiftCard = shiftCard,
+                shiftPosition = new positionType { row = nextMove.ShiftPositionRowIndex, col = nextMove.ShiftPositionColumnIndex }
+            };
+            return moveMessage;
         }
 
         private void SendMoveMessage(MoveMessageType moveMessage)
