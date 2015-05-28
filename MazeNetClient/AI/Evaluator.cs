@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MazeNetClient.Game;
 
 namespace MazeNetClient.AI
 {
     static class Evaluator
     {
-        internal static Move GetBestMove(List<SimulatedBoard> container, IEvaluationStrategy strategy)
+        internal static Move GetBestMove(List<SimulatedBoard> container, IRatingStrategy strategy)
         {
             var moves = new List<Tuple<Move, float>>(container.Count);
 
             foreach (SimulatedBoard sb in container)
             {
-                Tuple<Move, float> temp = strategy.GetBestMove(sb);
+                List<Field> posFields = sb.GetReachableFields(sb.PlayerPositionRowIndex, sb.PlayerPositionColumnIndex);
+                Tuple<Move, float> temp = strategy.GetBestMove(sb,posFields);
                 moves.Add(temp);
             }
 

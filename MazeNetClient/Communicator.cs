@@ -88,7 +88,7 @@ namespace MazeNetClient
 
             //var nextMove = m_mazePlayer.PlayNextMove(currentBoard, fieldWithPlayer.RowIndex, fieldWithPlayer.ColumnIndex, currentBoard.TreasureTarget);
             var simulatedBoards = AI.ShiftSimulator.GeneratePossibleBoards(currentBoard);
-            var nextMove = Evaluator.GetBestMove(simulatedBoards, new AI.StupidEvaluation());
+            var nextMove = Evaluator.GetBestMove(simulatedBoards, new AI.StupidRating());
 
             ApplyRotation(shiftCard, nextMove.ShiftCardRotation);
 
