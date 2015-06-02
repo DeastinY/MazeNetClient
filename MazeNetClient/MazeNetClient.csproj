@@ -64,14 +64,11 @@
   <ItemGroup>
     <Compile Include="AI\Evaluator.cs" />
     <Compile Include="AI\IRatingStrategy.cs" />
-    <Compile Include="AI\IMazePlayer.cs" />
     <Compile Include="AI\Move.cs" />
     <Compile Include="AI\Rotation.cs" />
-    <Compile Include="AI\SimpleMazePlayer.cs" />
     <Compile Include="AI\ShiftSimulator.cs" />
     <Compile Include="AI\SimulatedBoard.cs" />
     <Compile Include="AI\StupidRating.cs" />
-    <Compile Include="AI\UserInputMazePlayer.cs" />
     <Compile Include="Communicator.cs" />
     <Compile Include="Game\Field.cs" />
     <Compile Include="Game\GameExtensions.cs" />

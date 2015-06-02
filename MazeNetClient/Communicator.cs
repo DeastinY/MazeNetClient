@@ -13,15 +13,12 @@ namespace MazeNetClient
 
         private readonly string m_name;
 
-        private readonly IMazePlayer m_mazePlayer;
-
         private int m_clientId;
 
-        internal Communicator(ServerConnection connection, string name, IMazePlayer mazePlayer)
+        internal Communicator(ServerConnection connection, string name)
         {
             m_connection = connection;
             m_name = name;
-            m_mazePlayer = mazePlayer;
             m_clientId = -1;
         }
 
@@ -84,11 +81,9 @@ namespace MazeNetClient
         private MoveMessageType GenerateNextMove(Board currentBoard, cardType shiftCard)
         {
             Debug.Assert(currentBoard.Count(f => f.ContainsPlayer(m_clientId)) == 1);
-            var fieldWithPlayer = currentBoard.First(f => f.ContainsPlayer(m_clientId));
 
-            //var nextMove = m_mazePlayer.PlayNextMove(currentBoard, fieldWithPlayer.RowIndex, fieldWithPlayer.ColumnIndex, currentBoard.TreasureTarget);
-            var simulatedBoards = AI.ShiftSimulator.GeneratePossibleBoards(currentBoard);
-            var nextMove = Evaluator.GetBestMove(simulatedBoards, new AI.StupidRating());
+            var simulatedBoards = ShiftSimulator.GeneratePossibleBoards(currentBoard);
+            var nextMove = Evaluator.GetBestMove(simulatedBoards, new StupidRating());
 
             ApplyRotation(shiftCard, nextMove.ShiftCardRotation);
 

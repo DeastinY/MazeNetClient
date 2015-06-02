@@ -45,7 +45,7 @@ namespace MazeNetClient.AI
 
                 move = new Move(newField.RowIndex, newField.ColumnIndex, board.ShiftPositionRowIndex, board.ShiftPositionColumnIndex, board.ShiftCardRotation);
             }
-
+#warning HIER IST DER FEHLER; DISTANCE IST FALSCH.
             return Tuple.Create(move, result);
         }
 

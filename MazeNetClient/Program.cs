@@ -80,9 +80,7 @@ namespace MazeNetClient
             {
                 using (var connection = new Network.ServerConnection(ipAddress, port))
                 {
-                    //var mazePlayer = new AI.UserInputMazePlayer();
-                    var mazePlayer = new AI.SimpleMazePlayer();
-                    Communicator com = new Communicator(connection, "f4NCY 42 fuXOR", mazePlayer);
+                    Communicator com = new Communicator(connection, "f4NCY 42 fuXOR");
                     com.StartCommunication();
                 }
             }

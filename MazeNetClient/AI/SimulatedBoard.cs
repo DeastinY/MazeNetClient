@@ -232,7 +232,6 @@ namespace MazeNetClient.AI
                     break;
             }
 
-
             var shiftCard = new Field(shiftPositionRowIndex, shiftPositionColumnIndex, isLeftOpen, isTopOpen, isRightOpen, isBottomOpen,
                 (int[])containingPlayers.Clone(), from.Treasure, from.ContainsTreasure);
 

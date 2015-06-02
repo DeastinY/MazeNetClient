@@ -19,7 +19,7 @@ namespace MazeNetClient.AI
         private const int MAX_NUMBER_OF_SHIFTS = (((Board.ROW_COUNT / 2) * 2) + ((Board.COLUMN_COUNT / 2) * 2)) * 4;
 
         /// <summary>
-        /// Creates a list of SimulatedBoarb-objects so that every element in that list is the result of a possible shift operation.
+        /// Creates a list of SimulatedBoard-objects so that every element in that list is the result of a possible shift operation.
         /// </summary>
         /// <param name="currentBoard">The state of the Board where the shift operations are based on.</param>
         /// <returns>A List with SimulatedBoards.</returns>
