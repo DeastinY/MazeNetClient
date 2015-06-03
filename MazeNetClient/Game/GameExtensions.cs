@@ -173,5 +173,16 @@ namespace MazeNetClient.Game
             }
             return false;
         }
+
+        /// <summary>
+        /// Test if the given field contains a treasure with the specified treasure type.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="treasure"></param>
+        /// <returns>True if the field contains the treasure type, false otherwise.</returns>
+        internal static bool HasTreasure(this Field field, XSDGenerated.treasureType treasure)
+        {
+            return field.ContainsTreasure && field.Treasure == treasure;
+        }
     }
 }

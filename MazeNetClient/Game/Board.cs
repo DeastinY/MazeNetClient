@@ -1,6 +1,7 @@
 ﻿using MazeNetClient.XSDGenerated;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace MazeNetClient.Game
 {
@@ -67,6 +68,26 @@ namespace MazeNetClient.Game
         internal readonly TreasuresToGoType[] TreasuresToGo;
 
         /// <summary>
+        /// Describes the number of treasures, that the player with id 1 can reach on this board without any shift operation.
+        /// </summary>
+        internal readonly int PlayerOneNumReachableTreasures;
+
+        /// <summary>
+        /// Describes the number of treasures, that the player with id 2 can reach on this board without any shift operation.
+        /// </summary>
+        internal readonly int PlayerTwoNumReachableTreasures;
+
+        /// <summary>
+        /// Describes the number of treasures, that the player with id 3 can reach on this board without any shift operation.
+        /// </summary>
+        internal readonly int PlayerThreeNumReachableTreasures;
+
+        /// <summary>
+        /// Describes the number of treasures, that the player with id 4 can reach on this board without any shift operation.
+        /// </summary>
+        internal readonly int PlayerFourNumReachableTreasures;
+
+        /// <summary>
         /// Creates and initializes a new instance of the Board type, depending on the specified AwaitMoveMessageType.
         /// </summary>
         /// <param name="currentGameStatus">The specified AwaitMoveMessageType, that contains data bout the board and the game status.</param>
@@ -117,6 +138,12 @@ namespace MazeNetClient.Game
                     treasures = treasuresToGo[i].treasures
                 };
             }
+
+            //Initialize the different numbers of reachable fields for the four different players.
+            PlayerOneNumReachableTreasures = GetNumberOfReachableTreasures(1);
+            PlayerTwoNumReachableTreasures = GetNumberOfReachableTreasures(2);
+            PlayerThreeNumReachableTreasures = GetNumberOfReachableTreasures(3);
+            PlayerFourNumReachableTreasures = GetNumberOfReachableTreasures(4);
         }
 
         public Field this[int row, int column]
@@ -144,6 +171,21 @@ namespace MazeNetClient.Game
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        /// <summary>
+        /// Get the number of treasures, that you can reach from the field that contains the player with the specified id.
+        /// </summary>
+        /// <param name="playerId">The id of the player from where we start.</param>
+        /// <returns>The number of reachable treasures.</returns>
+        int GetNumberOfReachableTreasures(int playerId)
+        {
+            Debug.Assert(this.Count(f => f.ContainsPlayer(playerId)) == 1);
+
+            var playerField = this.First(f => f.ContainsPlayer(playerId));
+            var reachableFields = this.GetReachableFields(playerField.RowIndex, playerField.ColumnIndex);
+            int numberOfFieldsWithATreasure = reachableFields.Count(rf => rf.ContainsTreasure);
+            return numberOfFieldsWithATreasure;
         }
     }
 }
