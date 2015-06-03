@@ -21,7 +21,7 @@ namespace MazeNetClient.AI
             {
                 Field newField = null;
 
-                var foundTreasure = reachableFields.FirstOrDefault(fi => fi.ContainsTreasure && fi.Treasure == board.TreasureTarget);
+                var foundTreasure = reachableFields.FirstOrDefault(fi => fi.HasTreasure(board.TreasureTarget));
                 if (foundTreasure != null)
                 {
                     newField = foundTreasure;

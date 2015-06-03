@@ -177,7 +177,7 @@ namespace MazeNetClient.AI
             PlayerPositionColumnIndex = playerField.ColumnIndex;
 
             Debug.Assert(m_fields.Count(f => f.HasTreasure(TreasureTarget)) == 1);
-            var treasureTargetField = m_fields.First(f => f.ContainsTreasure && f.Treasure == TreasureTarget);
+            var treasureTargetField = m_fields.First(f => f.HasTreasure(TreasureTarget));
             TreasureTargetRowIndex = treasureTargetField.RowIndex;
             TreasureTargetColumnIndex = treasureTargetField.ColumnIndex;
         }
