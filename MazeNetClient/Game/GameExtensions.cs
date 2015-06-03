@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace MazeNetClient.Game
 {
@@ -157,6 +159,21 @@ namespace MazeNetClient.Game
             return false;
         }
 
+        /// <summary>
+        /// Get the number of treasures, that you can reach from the field that contains the player with the specified id.
+        /// </summary>
+        /// <param name="board">The board on that you search.</param>
+        /// <param name="playerId">The id of the player from where we start.</param>
+        /// <returns>The number of reachable treasures.</returns>
+        internal static int GetNumberOfReachableTreasures(this IFieldCollection board, int playerId)
+        {
+            Debug.Assert(board.Count(f => f.ContainsPlayer(playerId)) == 1);
+
+            var playerField = board.First(f => f.ContainsPlayer(playerId));
+            var reachableFields = board.GetReachableFields(playerField.RowIndex, playerField.ColumnIndex);
+            int numberOfFieldsWithATreasure = reachableFields.Count(rf => rf.ContainsTreasure);
+            return numberOfFieldsWithATreasure;
+        }
 
         /// <summary>
         /// Test, if the given field contains a player with the specified id.

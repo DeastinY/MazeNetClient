@@ -10,7 +10,7 @@ namespace MazeNetClient.Game
     /// A board consist of 7 times 7 fields, a shift card, a forbidden shifting place
     /// and the information about the next treasures position.
     /// </summary>
-    class Board : IEnumerable<Field>, IFieldCollection
+    class Board : IFieldCollection
     {
         /// <summary>
         /// This is the number of rows, that the playing board has.
@@ -21,6 +21,11 @@ namespace MazeNetClient.Game
         /// This is the number of columns, that the playing board has.
         /// </summary>
         internal const int COLUMN_COUNT = 7;
+
+        /// <summary>
+        /// Describes a history of all boards during the game.
+        /// </summary>
+        private static List<Board> boardHistory = new List<Board>();
 
         /// <summary>
         /// Holds an array with the length ROW_COUNT * COLUMN_COUNT.
@@ -140,10 +145,12 @@ namespace MazeNetClient.Game
             }
 
             //Initialize the different numbers of reachable fields for the four different players.
-            PlayerOneNumReachableTreasures = GetNumberOfReachableTreasures(1);
-            PlayerTwoNumReachableTreasures = GetNumberOfReachableTreasures(2);
-            PlayerThreeNumReachableTreasures = GetNumberOfReachableTreasures(3);
-            PlayerFourNumReachableTreasures = GetNumberOfReachableTreasures(4);
+            PlayerOneNumReachableTreasures = this.GetNumberOfReachableTreasures(1);
+            PlayerTwoNumReachableTreasures = this.GetNumberOfReachableTreasures(2);
+            PlayerThreeNumReachableTreasures = this.GetNumberOfReachableTreasures(3);
+            PlayerFourNumReachableTreasures = this.GetNumberOfReachableTreasures(4);
+
+            boardHistory.Add(this);
         }
 
         public Field this[int row, int column]
@@ -174,18 +181,38 @@ namespace MazeNetClient.Game
         }
 
         /// <summary>
-        /// Get the number of treasures, that you can reach from the field that contains the player with the specified id.
+        /// Resets the history of boards by removing all boards from the history.
         /// </summary>
-        /// <param name="playerId">The id of the player from where we start.</param>
-        /// <returns>The number of reachable treasures.</returns>
-        int GetNumberOfReachableTreasures(int playerId)
+        internal static void ResetBoardHistory()
         {
-            Debug.Assert(this.Count(f => f.ContainsPlayer(playerId)) == 1);
+            boardHistory.Clear();
+        }
 
-            var playerField = this.First(f => f.ContainsPlayer(playerId));
-            var reachableFields = this.GetReachableFields(playerField.RowIndex, playerField.ColumnIndex);
-            int numberOfFieldsWithATreasure = reachableFields.Count(rf => rf.ContainsTreasure);
-            return numberOfFieldsWithATreasure;
+        /// <summary>
+        /// Gets the number of boards in the history.
+        /// </summary>
+        internal static int HistoryLength
+        {
+            get { return boardHistory.Count; }
+        }
+
+        /// <summary>
+        /// Returns the board in the history at the specified index.
+        /// </summary>
+        /// <param name="index">The specified index of the board in the history.</param>
+        /// <returns></returns>
+        internal static Board GetBoard(int index)
+        {
+            Debug.Assert((uint)index < (uint)HistoryLength);
+            return boardHistory[index];
+        }
+
+        /// <summary>
+        /// Gets the board of the current round, which is always the last board in the history.
+        /// </summary>
+        internal static Board Current
+        {
+            get { return GetBoard(HistoryLength - 1); }
         }
     }
 }

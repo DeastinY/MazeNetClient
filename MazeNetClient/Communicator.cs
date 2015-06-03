@@ -20,6 +20,9 @@ namespace MazeNetClient
             m_connection = connection;
             m_name = name;
             m_clientId = -1;
+
+            //Reset the board-history, because maybe there are still boards left from a previous game.
+            Board.ResetBoardHistory();
         }
 
         internal void StartCommunication()
