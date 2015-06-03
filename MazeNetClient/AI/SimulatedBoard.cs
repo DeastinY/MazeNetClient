@@ -10,7 +10,7 @@ namespace MazeNetClient.AI
     /// This class creates a new board, based on an existing board and applies a shift operation on that new board.
     /// This class is used for simulating all possible shift operations on the current board and analyze the results.
     /// </summary>
-    class SimulatedBoard : IEnumerable<Field>, IFieldCollection
+    class SimulatedBoard : IFieldCollection
     {
         /// <summary>
         /// Holds the fields of the simulated board.
@@ -33,11 +33,6 @@ namespace MazeNetClient.AI
         internal readonly Rotation ShiftCardRotation;
 
         /// <summary>
-        /// Describes the id of the player that we represent.
-        /// </summary>
-        internal readonly int PlayerId;
-
-        /// <summary>
         /// Holds the index of the row where the player appears in the simulated board.
         /// </summary>
         internal readonly int PlayerPositionRowIndex;
@@ -48,27 +43,14 @@ namespace MazeNetClient.AI
         internal readonly int PlayerPositionColumnIndex;
 
         /// <summary>
-        /// Holds all treasures that are already found.
-        /// </summary>
-        internal readonly treasureType[] FoundTreasures;
-
-        /// <summary>
-        /// Describes an array of pairs, where each element describes a pair of a player id and the number of treasures that he still needs to find.
-        /// </summary>
-        internal readonly TreasuresToGoType[] TreasuresToGo;
-
-        /// <summary>
-        /// Describes the treasure, that the player needs to collect next.
-        /// </summary>
-        internal readonly treasureType TreasureTarget;
-
-        /// <summary>
         /// Describes the index of the row where the treasure appears that our player needs to find next.
+        /// Or -1 when in that simulated board the field with the treasure is kicked out by the shift operation.
         /// </summary>
         internal readonly int TreasureTargetRowIndex;
 
         /// <summary>
         /// Describes the index of the column where the treasure appears that our player needs to find next.
+        /// Or -1 when in that simulated board the field with the treasure is kicked out by the shift operation.
         /// </summary>
         internal readonly int TreasureTargetColumnIndex;
 
@@ -85,15 +67,6 @@ namespace MazeNetClient.AI
             ShiftPositionRowIndex = shiftPositionRowIndex;
             ShiftPositionColumnIndex = shiftPositionColumnIndex;
             ShiftCardRotation = shiftCardRotation;
-            PlayerId = actualBoard.PlayerId;
-            FoundTreasures = (treasureType[])actualBoard.FoundTreasures.Clone();
-            TreasuresToGo = new TreasuresToGoType[actualBoard.TreasuresToGo.Length];
-            for (int i = 0; i < TreasuresToGo.Length; ++i)
-            {
-                var aTreasureToGo = actualBoard.TreasuresToGo[i];
-                TreasuresToGo[i] = new TreasuresToGoType { player = aTreasureToGo.player, treasures = aTreasureToGo.treasures };
-            }
-            TreasureTarget = actualBoard.TreasureTarget;
 
             //This variable describes the player ids, that were kicked out of the game by inserting the shift card.
             //They have to be inserted in the shift card.
@@ -171,15 +144,23 @@ namespace MazeNetClient.AI
             }
 
 
-            Debug.Assert(m_fields.Count(f => f.ContainsPlayer(PlayerId)) == 1);
-            var playerField = m_fields.First(f => f.ContainsPlayer(PlayerId));
+            Debug.Assert(m_fields.Count(f => f.ContainsPlayer(Board.Current.PlayerId)) == 1);
+            var playerField = m_fields.First(f => f.ContainsPlayer(Board.Current.PlayerId));
             PlayerPositionRowIndex = playerField.RowIndex;
             PlayerPositionColumnIndex = playerField.ColumnIndex;
 
-            Debug.Assert(m_fields.Count(f => f.HasTreasure(TreasureTarget)) == 1);
-            var treasureTargetField = m_fields.First(f => f.HasTreasure(TreasureTarget));
-            TreasureTargetRowIndex = treasureTargetField.RowIndex;
-            TreasureTargetColumnIndex = treasureTargetField.ColumnIndex;
+            Debug.Assert(m_fields.Count(f => f.HasTreasure(Board.Current.TreasureTarget)) <= 1);
+            var treasureTargetField = m_fields.FirstOrDefault(f => f.HasTreasure(Board.Current.TreasureTarget));
+            if (treasureTargetField != null)
+            {
+                TreasureTargetRowIndex = treasureTargetField.RowIndex;
+                TreasureTargetColumnIndex = treasureTargetField.ColumnIndex;
+            }
+            else
+            {
+                TreasureTargetRowIndex = -1;
+                TreasureTargetColumnIndex = -1;
+            }
         }
 
         public Field this[int row, int column]
