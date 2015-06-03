@@ -63,6 +63,16 @@ namespace MazeNetClient.AI
         internal readonly treasureType TreasureTarget;
 
         /// <summary>
+        /// Describes the index of the row where the treasure appears that our player needs to find next.
+        /// </summary>
+        internal readonly int TreasureTargetRowIndex;
+
+        /// <summary>
+        /// Describes the index of the column where the treasure appears that our player needs to find next.
+        /// </summary>
+        internal readonly int TreasureTargetColumnIndex;
+
+        /// <summary>
         /// Creates and initializes a new instance of the type SimulatedBoard.
         /// </summary>
         /// <param name="actualBoard">The initial board where the shift will be simulated on.</param>
@@ -165,6 +175,11 @@ namespace MazeNetClient.AI
             var playerField = m_fields.First(f => f.ContainsPlayer(PlayerId));
             PlayerPositionRowIndex = playerField.RowIndex;
             PlayerPositionColumnIndex = playerField.ColumnIndex;
+
+            Debug.Assert(m_fields.Count(f => f.ContainsTreasure && f.Treasure == TreasureTarget) == 1);
+            var treasureTargetField = m_fields.First(f => f.ContainsTreasure && f.Treasure == TreasureTarget);
+            TreasureTargetRowIndex = treasureTargetField.RowIndex;
+            TreasureTargetColumnIndex = treasureTargetField.ColumnIndex;
         }
 
         public Field this[int row, int column]
