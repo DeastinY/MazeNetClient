@@ -58,10 +58,11 @@ namespace MazeNetClient.AI
         /// Creates and initializes a new instance of the type SimulatedBoard.
         /// </summary>
         /// <param name="actualBoard">The initial board where the shift will be simulated on.</param>
+        /// <param name="shiftCard">The card that will be inserted for the shift.</param>
         /// <param name="shiftPositionRowIndex">The index of the row where the shift card will be inserted.</param>
         /// <param name="shiftPositionColumnIndex">The index of the column where the shift card will be inserted.</param>
         /// <param name="shiftCardRotation">The rotation that will be applied to the shift card.</param>
-        internal SimulatedBoard(Board actualBoard, int shiftPositionRowIndex, int shiftPositionColumnIndex, Rotation shiftCardRotation)
+        internal SimulatedBoard(IFieldCollection actualBoard, Field shiftCard, int shiftPositionRowIndex, int shiftPositionColumnIndex, Rotation shiftCardRotation)
         {
             m_fields = new Field[Board.ROW_COUNT * Board.COLUMN_COUNT];
             ShiftPositionRowIndex = shiftPositionRowIndex;
@@ -122,7 +123,7 @@ namespace MazeNetClient.AI
                 Debug.Assert(false, "This code should not be reached!");
             }
 
-            InsertShiftCard(actualBoard.ShiftCard, shiftCardRotation, shiftPositionRowIndex, shiftPositionColumnIndex, kickedPlayers);
+            InsertShiftCard(shiftCard, shiftCardRotation, shiftPositionRowIndex, shiftPositionColumnIndex, kickedPlayers);
 
             //Fill up the m_fields with all fields, that are not infected by the shift operation (and therefore still null).
             for (int i = 0; i < Board.ROW_COUNT; ++i)
