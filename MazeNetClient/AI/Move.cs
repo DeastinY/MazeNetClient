@@ -61,5 +61,10 @@ namespace MazeNetClient.AI
             ShiftPositionColumnIndex = shiftPositionColumnIndex;
             ShiftCardRotation = shiftCardRotation;
         }
+
+        internal static Move Create(SimulatedBoard newBoard, int newPinPosRowIndex, int newPinPosColumnIndex)
+        {
+            return new Move(newPinPosRowIndex, newPinPosColumnIndex, newBoard.ShiftPositionRowIndex, newBoard.ShiftPositionColumnIndex, newBoard.ShiftCardRotation);
+        }
     }
 }
