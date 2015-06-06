@@ -65,6 +65,14 @@ namespace MazeNetClient.Network
             int totalNumberOfReadBytes = 0;
             try
             {
+                if (receiveLength != MESSAGE_LENGTH_SIZE)
+                {
+                    //We often come to the problem that we try to read data from the stream, but then get an ArrayOutOfBoundsException.
+                    //Perhaps this happens because the data did not arrive yet. So we wait for a second to let the data arrive first.
+                    System.Threading.Thread.Sleep(1000);
+                    //TODO: When we come to the point that performance becomes important, we can test whether we could reduce the sleep-time.
+                }
+
                 while (totalNumberOfReadBytes != receiveLength)
                 {
                     int numberOfReadBytes = stream.Read(buffer, totalNumberOfReadBytes, receiveLength);
