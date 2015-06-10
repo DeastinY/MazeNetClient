@@ -55,6 +55,11 @@ namespace MazeNetClient.AI
         internal readonly int TreasureTargetColumnIndex;
 
         /// <summary>
+        /// Describes the field that was kicked out by the applied shift operation. It will be used as shift card for the following draw.
+        /// </summary>
+        internal readonly Field KickedField;
+
+        /// <summary>
         /// Creates and initializes a new instance of the type SimulatedBoard.
         /// </summary>
         /// <param name="actualBoard">The initial board where the shift will be simulated on.</param>
@@ -69,13 +74,9 @@ namespace MazeNetClient.AI
             ShiftPositionColumnIndex = shiftPositionColumnIndex;
             ShiftCardRotation = shiftCardRotation;
 
-            //This variable describes the player ids, that were kicked out of the game by inserting the shift card.
-            //They have to be inserted in the shift card.
-            int[] kickedPlayers = null;
-
             if (InsertInRowFromLeft(shiftPositionRowIndex, shiftPositionColumnIndex))
             {
-                kickedPlayers = actualBoard[shiftPositionRowIndex, Board.COLUMN_COUNT - 1].ContainingPlayers;
+                KickedField = actualBoard[shiftPositionRowIndex, Board.COLUMN_COUNT - 1];
 
                 for (int j = 1; j < Board.COLUMN_COUNT; ++j)
                 {
@@ -86,7 +87,7 @@ namespace MazeNetClient.AI
             }
             else if (InsertInRowFromRight(shiftPositionRowIndex, shiftPositionColumnIndex))
             {
-                kickedPlayers = actualBoard[shiftPositionRowIndex, 0].ContainingPlayers;
+                KickedField = actualBoard[shiftPositionRowIndex, 0];
 
                 for (int j = 0; j < Board.COLUMN_COUNT - 1; ++j)
                 {
@@ -97,7 +98,7 @@ namespace MazeNetClient.AI
             }
             else if (InsertInColumnFromTop(shiftPositionRowIndex, shiftPositionColumnIndex))
             {
-                kickedPlayers = actualBoard[Board.ROW_COUNT - 1, shiftPositionColumnIndex].ContainingPlayers;
+                KickedField = actualBoard[Board.ROW_COUNT - 1, shiftPositionColumnIndex];
 
                 for (int i = 1; i < Board.ROW_COUNT; ++i)
                 {
@@ -109,7 +110,7 @@ namespace MazeNetClient.AI
             }
             else if (InsertInColumnFromBottom(shiftPositionRowIndex, shiftPositionColumnIndex))
             {
-                kickedPlayers = actualBoard[0, shiftPositionColumnIndex].ContainingPlayers;
+                KickedField = actualBoard[0, shiftPositionColumnIndex];
 
                 for (int i = 0; i < Board.ROW_COUNT - 1; ++i)
                 {
@@ -123,7 +124,7 @@ namespace MazeNetClient.AI
                 Debug.Assert(false, "This code should not be reached!");
             }
 
-            InsertShiftCard(shiftCard, shiftCardRotation, shiftPositionRowIndex, shiftPositionColumnIndex, kickedPlayers);
+            InsertShiftCard(shiftCard, shiftCardRotation, shiftPositionRowIndex, shiftPositionColumnIndex);
 
             //Fill up the m_fields with all fields, that are not infected by the shift operation (and therefore still null).
             for (int i = 0; i < Board.ROW_COUNT; ++i)
@@ -191,7 +192,7 @@ namespace MazeNetClient.AI
             return GetEnumerator();
         }
 
-        private void InsertShiftCard(Field from, Rotation rotation, int shiftPositionRowIndex, int shiftPositionColumnIndex, int[] containingPlayers)
+        private void InsertShiftCard(Field from, Rotation rotation, int shiftPositionRowIndex, int shiftPositionColumnIndex)
         {
             bool isLeftOpen = false,
                  isTopOpen = false,
@@ -230,7 +231,7 @@ namespace MazeNetClient.AI
             }
 
             var shiftCard = new Field(shiftPositionRowIndex, shiftPositionColumnIndex, isLeftOpen, isTopOpen, isRightOpen, isBottomOpen,
-                (int[])containingPlayers.Clone(), from.Treasure, from.ContainsTreasure);
+                (int[])KickedField.ContainingPlayers.Clone(), from.Treasure, from.ContainsTreasure);
 
             int shiftCard1DIndex = shiftPositionRowIndex * Board.ROW_COUNT + shiftPositionColumnIndex;
             m_fields[shiftCard1DIndex] = shiftCard;

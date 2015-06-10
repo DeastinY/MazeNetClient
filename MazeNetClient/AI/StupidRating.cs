@@ -7,45 +7,36 @@ namespace MazeNetClient.AI
 {
     class StupidRating : IRatingStrategy
     {
-        public Tuple<Move, float> GetBestMove(SimulatedBoard board, List<Field> reachableFields)
+        public Tuple<Move, float> GetBestMove(SimulatedBoard board)
         {
             float result = 0.0f;
             Move move = null;
+            var reachableFields = board.GetReachableFields(board.PlayerPositionRowIndex, board.PlayerPositionColumnIndex);
 
             if (reachableFields.Count == 0)
             {
-                move = new Move(board.PlayerPositionRowIndex, board.PlayerPositionColumnIndex,
-                    board.ShiftPositionRowIndex, board.ShiftPositionColumnIndex, board.ShiftCardRotation);
+                move = Move.Create(board, board.PlayerPositionRowIndex, board.PlayerPositionColumnIndex);
             }
             else
             {
                 Field newField = null;
 
-                var foundTreasure = reachableFields.FirstOrDefault(fi => fi.HasTreasure(board.TreasureTarget));
-                if (foundTreasure != null)
+                float maxDist = -1;
+                foreach (var aField in reachableFields)
                 {
-                    newField = foundTreasure;
-                    result = 1.0f;
-                }
-                else
-                {
-                    float maxDist = -1;
-                    foreach (var aField in reachableFields)
+                    var dist = Distance(aField, board.PlayerPositionRowIndex, board.PlayerPositionColumnIndex);
+                    if (dist > maxDist)
                     {
-                        var dist = Distance(aField, board.PlayerPositionRowIndex, board.PlayerPositionColumnIndex);
-                        if (dist > maxDist)
-                        {
-                            maxDist = dist;
-                            newField = aField;
-                        }
+                        maxDist = dist;
+                        newField = aField;
                     }
-
-                    result = 1.0f - 1.0f / reachableFields.Count;
                 }
+
+                result = 1.0f - 1.0f / maxDist;
 
                 move = new Move(newField.RowIndex, newField.ColumnIndex, board.ShiftPositionRowIndex, board.ShiftPositionColumnIndex, board.ShiftCardRotation);
             }
-#warning HIER IST DER FEHLER; DISTANCE IST FALSCH.
+
             return Tuple.Create(move, result);
         }
 

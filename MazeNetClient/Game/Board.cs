@@ -180,6 +180,11 @@ namespace MazeNetClient.Game
             return GetEnumerator();
         }
 
+        internal IEnumerable<int> GetEnemyPlayers()
+        {
+            return TreasuresToGo.Select(ttg => ttg.player).Where(id => id != PlayerId);
+        }
+
         /// <summary>
         /// Resets the history of boards by removing all boards from the history.
         /// </summary>

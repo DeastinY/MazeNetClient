@@ -201,5 +201,30 @@ namespace MazeNetClient.Game
         {
             return field.ContainsTreasure && field.Treasure == treasure;
         }
+
+        /// <summary>
+        /// Returns the number of open paths on a board.
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns></returns>
+        internal static int GetNumberOfOpenPaths(this IFieldCollection board)
+        {
+            int numberOfOpenPaths = 0;
+
+            for (int i = 0; i < Board.ROW_COUNT; ++i)
+            {
+                for (int j = 0; j < Board.COLUMN_COUNT; ++j)
+                {
+                    if (board.CanGoLeft(i, j)) ++numberOfOpenPaths;
+                    if (board.CanGoUp(i, j)) ++numberOfOpenPaths;
+                    if (board.CanGoRight(i, j)) ++numberOfOpenPaths;
+                    if (board.CanGoDown(i, j)) ++numberOfOpenPaths;
+                }
+            }
+
+            Debug.Assert(numberOfOpenPaths % 2 == 0);
+            numberOfOpenPaths /= 2; //we counted each path twice
+            return numberOfOpenPaths;
+        }
     }
 }

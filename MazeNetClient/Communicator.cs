@@ -7,14 +7,35 @@ using System.Linq;
 
 namespace MazeNetClient
 {
+    /// <summary>
+    /// This class starts a communication with a MazeNetServer. It sends and retrieves messages that are
+    /// interpreted and delegated by and to other components into this class.
+    /// </summary>
     class Communicator
     {
+        /// <summary>
+        /// Holds the connection to the MazeNetServer.
+        /// Via that member messages will be sent to / received from the MazeNetServer.
+        /// </summary>
         private readonly ServerConnection m_connection;
 
+        /// <summary>
+        /// Holds a name of the client that will be shown to the MazeNetServer.
+        /// </summary>
         private readonly string m_name;
 
+        /// <summary>
+        /// Describes the id of the client. The id will be distributed by the MazeNetServer.
+        /// The id has to be contained within each message that we send to the MazeNetServer so he can
+        /// identify us.
+        /// </summary>
         private int m_clientId;
 
+        /// <summary>
+        /// Creates and initializes a new instance of the class Communicator.
+        /// </summary>
+        /// <param name="connection">The connection to the MazeNetServer.</param>
+        /// <param name="name">The name of the client. This name will be shown to the MazeNetServer.</param>
         internal Communicator(ServerConnection connection, string name)
         {
             m_connection = connection;
@@ -25,6 +46,11 @@ namespace MazeNetClient
             Board.ResetBoardHistory();
         }
 
+        /// <summary>
+        /// Starts the communication to the MazeNetServer.
+        /// This will also start the game and will lead into a loop that ends,
+        /// when either a winner of the game is found of when we disconnect from the MazeNetServer.
+        /// </summary>
         internal void StartCommunication()
         {
             //Send the LoginMessage
@@ -48,6 +74,10 @@ namespace MazeNetClient
             StartGame();
         }
 
+        /// <summary>
+        /// Start the game. Receive messages, generate answers and go on
+        /// until either a winner was found or we disconnected from the server.
+        /// </summary>
         private void StartGame()
         {
             var nextMessage = ReceiveMazeCom();
@@ -65,15 +95,23 @@ namespace MazeNetClient
                 nextMessage = ReceiveMazeCom();
             }
 
-            FinishGame(nextMessage);
+            InterpretFinalMessage(nextMessage);
         }
 
+        /// <summary>
+        /// Convert the given mazeComObject to a string and send it via the connection to the MazeNetServer.
+        /// </summary>
+        /// <param name="mazeComObject">The given mazeComObject that will be send.</param>
         private void SendMazeCom(MazeCom mazeComObject)
         {
             var stringMessage = mazeComObject.ConvertToString();
             m_connection.SendMessage(stringMessage);
         }
 
+        /// <summary>
+        /// Receive a message from the MazeNetServer and convert it to a MazeComObject.
+        /// </summary>
+        /// <returns>The next MazeComObject sent by the server.</returns>
         private MazeCom ReceiveMazeCom()
         {
             var stringMessage = m_connection.ReceiveMessage();
@@ -85,8 +123,8 @@ namespace MazeNetClient
         {
             Debug.Assert(currentBoard.Count(f => f.ContainsPlayer(m_clientId)) == 1);
 
-            var simulatedBoards = ShiftSimulator.GeneratePossibleBoards(currentBoard);
-            var nextMove = Evaluator.GetBestMove(simulatedBoards, new StupidRating());
+            var simulatedBoards = ShiftSimulator.GeneratePossibleBoards(currentBoard, currentBoard.ShiftCard, currentBoard.ForbiddenShiftRow, currentBoard.ForbiddenShiftColumn);
+            var nextMove = Evaluator.GetBestMove(simulatedBoards);
 
             ApplyRotation(shiftCard, nextMove.ShiftCardRotation);
 
@@ -99,6 +137,11 @@ namespace MazeNetClient
             return moveMessage;
         }
 
+        /// <summary>
+        /// Wraps the given moveMessage in a MazeComObject and sends it to the server.
+        /// Waits until the MazeNetServer answers with an accept-message.
+        /// </summary>
+        /// <param name="moveMessage">The given moveMessage that wil be send.</param>
         private void SendMoveMessage(MoveMessageType moveMessage)
         {
             //Create a MazeCom-object with the moveMessage as member
@@ -125,6 +168,12 @@ namespace MazeNetClient
             }
         }
 
+        /// <summary>
+        /// Applies the given rotation to the given shift-card.
+        /// This will affect the openings of the shift-card only.
+        /// </summary>
+        /// <param name="shiftCard">The given shift-card whose openings will be modified.</param>
+        /// <param name="rotation">The rotation by that the shift-card will be rotated.</param>
         private void ApplyRotation(cardType shiftCard, AI.Rotation rotation)
         {
             var openings = shiftCard.openings;
@@ -162,7 +211,7 @@ namespace MazeNetClient
             }
         }
 
-        private void FinishGame(MazeCom finalMazeComMessage)
+        private void InterpretFinalMessage(MazeCom finalMazeComMessage)
         {
             if (finalMazeComMessage.mcType == MazeComType.WIN)
             {
@@ -179,7 +228,8 @@ namespace MazeNetClient
             else
             {
                 Debug.Assert(finalMazeComMessage.mcType == MazeComType.DISCONNECT);
-                Logger.WriteLine("Disconnected from server.");
+                var disconnectMessage = (DisconnectMessageType)finalMazeComMessage.Item;
+                Logger.WriteLine("Disconnected from server with error code: " + disconnectMessage.errorCode + " and name: " + disconnectMessage.name);
             }
         }
     }
