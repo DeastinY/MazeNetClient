@@ -40,7 +40,7 @@ namespace MazeNetClient.Network
         static byte[] IntToBytes(int value)
         {
             byte[] byteInt = new byte[MESSAGE_LENGTH_SIZE];
-            for (int i = 0; i < MESSAGE_LENGTH_SIZE; ++i)
+            for (int i = MESSAGE_LENGTH_SIZE - 1; i >= 0; --i)
             {
                 byteInt[i] = (byte)(value & LOWEST_BYTE);
                 value >>= EIGHT_BITS;
@@ -51,7 +51,7 @@ namespace MazeNetClient.Network
         static int BytesToInt(byte[] byteInt)
         {
             int value = 0;
-            for (int i = MESSAGE_LENGTH_SIZE - 1; i >= 0; --i)
+            for (int i = 0; i < MESSAGE_LENGTH_SIZE; ++i)
             {
                 value <<= EIGHT_BITS;
                 value |= (byteInt[i] & LOWEST_BYTE);
