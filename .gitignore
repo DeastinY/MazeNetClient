@@ -2,5 +2,5 @@ MazeNetClient/bin/*
 MazeNetClient/obj/*
 *.suo
 *.pyc
-MonteCarlPY/.idea/*
+MazeNetEvaluator/.idea/*
 MazeNetClient/MazeNetClient.csproj.user
