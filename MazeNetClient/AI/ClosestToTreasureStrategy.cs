@@ -10,7 +10,7 @@ namespace MazeNetClient.AI
     /// </summary>
     class ClosestToTreasureStrategy : IRatingStrategy
     {
-        public Tuple<Move, float> GetBestMove(SimulatedBoard board)
+        public Tuple<Move, float> GetBestMove(ShiftedBoard board)
         {
             /* Try to get to one of the diagonal fields around the treasure.
              *  d1      d2

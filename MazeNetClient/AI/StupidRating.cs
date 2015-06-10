@@ -7,7 +7,7 @@ namespace MazeNetClient.AI
 {
     class StupidRating : IRatingStrategy
     {
-        public Tuple<Move, float> GetBestMove(SimulatedBoard board)
+        public Tuple<Move, float> GetBestMove(ShiftedBoard board)
         {
             float result = 0.0f;
             Move move = null;

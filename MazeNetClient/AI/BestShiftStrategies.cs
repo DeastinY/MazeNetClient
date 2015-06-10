@@ -12,7 +12,7 @@ namespace MazeNetClient.AI
     /// </summary>
     /// <param name="possibleShiftOperations">A sequence of possible shift operations.</param>
     /// <returns>An element from the list, describing the best shift operation.</returns>
-    internal delegate SimulatedBoard BestShiftStrategy(IEnumerable<SimulatedBoard> possibleShiftOperations);
+    internal delegate ShiftedBoard BestShiftStrategy(IEnumerable<ShiftedBoard> possibleShiftOperations);
 
     /// <summary>
     /// A static class, containing a set of BestShiftStrategy.
@@ -24,9 +24,9 @@ namespace MazeNetClient.AI
         /// </summary>
         /// <param name="possibleShiftOperations">A sequence of possible shift operations.</param>
         /// <returns>The possible shift operation that minimizes the number of reachable treasures for the other players.</returns>
-        internal static SimulatedBoard MinimizeTotalNumberOfReachableTreasures(IEnumerable<SimulatedBoard> possibleShiftOperations)
+        internal static ShiftedBoard MinimizeTotalNumberOfReachableTreasures(IEnumerable<ShiftedBoard> possibleShiftOperations)
         {
-            SimulatedBoard bestShiftOperation = null;
+            ShiftedBoard bestShiftOperation = null;
             int minNumberOfReachableTreasures = int.MaxValue;
             var enemyPlayers = Board.Current.GetEnemyPlayers();
 
@@ -55,7 +55,7 @@ namespace MazeNetClient.AI
         /// </summary>
         /// <param name="possibleShiftOperations"></param>
         /// <returns></returns>
-        internal static SimulatedBoard MinimizeTotalNumberOfReachableTreasuresForBestPlayers(IEnumerable<SimulatedBoard> possibleShiftOperations)
+        internal static ShiftedBoard MinimizeTotalNumberOfReachableTreasuresForBestPlayers(IEnumerable<ShiftedBoard> possibleShiftOperations)
         {
             var otherPlayersTreasuresToGo = Board.Current.TreasuresToGo.Where(t => t.player != Board.Current.PlayerId).ToArray();
             if (otherPlayersTreasuresToGo.Length == 0)
@@ -68,7 +68,7 @@ namespace MazeNetClient.AI
             int minimalNumberOfMissingTreasures = otherPlayersTreasuresToGo.Min(t => t.treasures);
             var bestEnemyPlayers = otherPlayersTreasuresToGo.Where(t => t.treasures == minimalNumberOfMissingTreasures).Select(t => t.player);
 
-            SimulatedBoard bestShiftOperation = null;
+            ShiftedBoard bestShiftOperation = null;
             int minNumberOfReachableTreasures = int.MaxValue;
 
             foreach (var aBoard in possibleShiftOperations)
@@ -88,11 +88,11 @@ namespace MazeNetClient.AI
             return bestShiftOperation;
         }
 
-        internal static SimulatedBoard MinimizeOpenPaths(IEnumerable<SimulatedBoard> possibleShiftOperations)
+        internal static ShiftedBoard MinimizeOpenPaths(IEnumerable<ShiftedBoard> possibleShiftOperations)
         {
 #warning TODO: Auch hier könnte man die anzahl der open paths im Board vergleichen mit denen des SimulatedBoards, die diese Methode zurückgibt und anhand der differenz diese Methode bewerten!
 
-            SimulatedBoard minNumOfOpenPathsBoard = null;
+            ShiftedBoard minNumOfOpenPathsBoard = null;
             int minNumOfOpenPaths = int.MaxValue;
 
             foreach (var aPossibleShiftOperation in possibleShiftOperations)

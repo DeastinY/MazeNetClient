@@ -67,11 +67,9 @@
     <Compile Include="AI\BestShiftStrategies.cs" />
     <Compile Include="AI\IRatingStrategy.cs" />
     <Compile Include="AI\Move.cs" />
-    <Compile Include="AI\MultipleStepsRating.cs" />
-    <Compile Include="AI\RecursiveSimulatedMove.cs" />
     <Compile Include="AI\Rotation.cs" />
     <Compile Include="AI\ShiftSimulator.cs" />
-    <Compile Include="AI\SimulatedBoard.cs" />
+    <Compile Include="AI\ShiftedBoard.cs" />
     <Compile Include="AI\StupidRating.cs" />
     <Compile Include="Communicator.cs" />
     <Compile Include="Game\Field.cs" />

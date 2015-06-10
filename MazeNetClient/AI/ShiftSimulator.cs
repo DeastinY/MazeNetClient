@@ -6,8 +6,8 @@ using System.Diagnostics;
 namespace MazeNetClient.AI
 {
     /// <summary>
-    /// A static class that contains a method for generating a list of SimulatedBoards.
-    /// One SimulatedBoard represents a possible shift applied to the current game board.
+    /// A static class that contains a method for generating a list of ShiftedBoards.
+    /// One ShiftedBoard represents a possible shift applied to the current game board.
     /// </summary>
     static class ShiftSimulator
     {
@@ -19,16 +19,16 @@ namespace MazeNetClient.AI
         private const int MAX_NUMBER_OF_SHIFTS = (((Board.ROW_COUNT / 2) * 2) + ((Board.COLUMN_COUNT / 2) * 2)) * 4;
 
         /// <summary>
-        /// Creates a list of SimulatedBoard-objects so that every element in that list is the result of a possible shift operation.
+        /// Creates a list of ShiftedBoard-objects so that every element in that list is the result of a possible shift operation.
         /// </summary>
         /// <param name="currentBoard">The state of the board where the shift operations are based on.</param>
         /// <param name="shiftCard">The shift card that wil be used for the shift operations.</param>
         /// <param name="forbiddenShiftRowIndex">The index of the row where the shift card is not allowed to be inserted.</param>
         /// <param name="forbiddenShiftColumnIndex">The index of the column where the shift card is not allwoed to be inserted.</param>
-        /// <returns>A List with SimulatedBoards.</returns>
-        internal static List<SimulatedBoard> GeneratePossibleBoards(IFieldCollection currentBoard, Field shiftCard, int forbiddenShiftRowIndex, int forbiddenShiftColumnIndex)
+        /// <returns>A List with ShiftedBoards.</returns>
+        internal static List<ShiftedBoard> GeneratePossibleBoards(IFieldCollection currentBoard, Field shiftCard, int forbiddenShiftRowIndex, int forbiddenShiftColumnIndex)
         {
-            var possibleBoards = new List<SimulatedBoard>(MAX_NUMBER_OF_SHIFTS);
+            var possibleBoards = new List<ShiftedBoard>(MAX_NUMBER_OF_SHIFTS);
 
             //Iterate over the rows.
             for (int i = 1; i < Board.ROW_COUNT; i += 2)
@@ -64,12 +64,12 @@ namespace MazeNetClient.AI
                 || forbiddenShiftColumnIndex != shiftPositionColumnIndex;
         }
 
-        static void AddAllShiftRotations(List<SimulatedBoard> container, IFieldCollection currentBoard, Field shiftCard, int shiftCardPositionRowIndex, int shiftCardPositionColumnIndex)
+        static void AddAllShiftRotations(List<ShiftedBoard> container, IFieldCollection currentBoard, Field shiftCard, int shiftCardPositionRowIndex, int shiftCardPositionColumnIndex)
         {
             foreach (Rotation aRotation in Enum.GetValues(typeof(Rotation)))
             {
-                var aSimulatedBoard = new SimulatedBoard(currentBoard, shiftCard, shiftCardPositionRowIndex, shiftCardPositionColumnIndex, aRotation);
-                container.Add(aSimulatedBoard);
+                var aShiftedBoard = new ShiftedBoard(currentBoard, shiftCard, shiftCardPositionRowIndex, shiftCardPositionColumnIndex, aRotation);
+                container.Add(aShiftedBoard);
             }
         }
     }

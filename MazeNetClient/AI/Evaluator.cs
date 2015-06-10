@@ -7,7 +7,7 @@ namespace MazeNetClient.AI
 {
     static class Evaluator
     {
-        internal static Move GetBestMove(List<SimulatedBoard> possibleBoards)
+        internal static Move GetBestMove(List<ShiftedBoard> possibleBoards)
         {
             var aFindingMove = TryGetTreasureFindingMove(possibleBoards, BestShiftStrategies.MinimizeTotalNumberOfReachableTreasures);
             if (aFindingMove != null)
@@ -22,7 +22,7 @@ namespace MazeNetClient.AI
 
             foreach (var aStrategy in strategyList)
             {
-                foreach (SimulatedBoard sb in possibleBoards)
+                foreach (ShiftedBoard sb in possibleBoards)
                 {
                     Tuple<Move, float> temp = aStrategy.GetBestMove(sb);
                     ratedMoves.Add(temp);
@@ -41,13 +41,13 @@ namespace MazeNetClient.AI
             return bestRatedMove.Item1;
         }
 
-        static Move TryGetTreasureFindingMove(IEnumerable<SimulatedBoard> simulatedBoards, BestShiftStrategy bestShiftFinder)
+        static Move TryGetTreasureFindingMove(IEnumerable<ShiftedBoard> possibleShiftedBoards, BestShiftStrategy bestShiftFinder)
         {
-            var findingMoves = new List<SimulatedBoard>();
+            var findingMoves = new List<ShiftedBoard>();
 
-            foreach (var aBoard in simulatedBoards)
+            foreach (var aBoard in possibleShiftedBoards)
             {
-                //Get all fields that our player can reach on that simulated board.
+                //Get all fields that our player can reach on that shifted board.
                 var reachableFields = aBoard.GetReachableFields(aBoard.PlayerPositionRowIndex, aBoard.PlayerPositionColumnIndex);
                 //When any of those reachable fields contains our treasure, add it to the findingMoves.
                 if (reachableFields.Any(fi => fi.HasTreasure(Board.Current.TreasureTarget)))

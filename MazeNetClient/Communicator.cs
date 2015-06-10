@@ -123,8 +123,8 @@ namespace MazeNetClient
         {
             Debug.Assert(currentBoard.Count(f => f.ContainsPlayer(m_clientId)) == 1);
 
-            var simulatedBoards = ShiftSimulator.GeneratePossibleBoards(currentBoard, currentBoard.ShiftCard, currentBoard.ForbiddenShiftRow, currentBoard.ForbiddenShiftColumn);
-            var nextMove = Evaluator.GetBestMove(simulatedBoards);
+            var shiftedBoards = ShiftSimulator.GeneratePossibleBoards(currentBoard, currentBoard.ShiftCard, currentBoard.ForbiddenShiftRow, currentBoard.ForbiddenShiftColumn);
+            var nextMove = Evaluator.GetBestMove(shiftedBoards);
 
             ApplyRotation(shiftCard, nextMove.ShiftCardRotation);
 
