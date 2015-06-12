@@ -107,5 +107,28 @@ namespace MazeNetClient.AI
 
             return minNumOfOpenPathsBoard;
         }
+
+        /// <summary>
+        /// Returns the ShiftedBoard with the maximum number of fields that our player can reach on.
+        /// </summary>
+        /// <param name="possibleShiftOperations"></param>
+        /// <returns></returns>
+        internal static ShiftedBoard MaximizeNumberOfReachableFields(IEnumerable<ShiftedBoard> possibleShiftOperations)
+        {
+            ShiftedBoard maxNumOfReachableFieldsBoard = null;
+            int maxNumOfReachableFields = 0;
+
+            foreach (var aPossibleShiftOperation in possibleShiftOperations)
+            {
+                var numOfReachableFields = aPossibleShiftOperation.GetReachableFields(aPossibleShiftOperation.PlayerPositionRowIndex, aPossibleShiftOperation.PlayerPositionColumnIndex).Count;
+                if (numOfReachableFields > maxNumOfReachableFields)
+                {
+                    maxNumOfReachableFields = numOfReachableFields;
+                    maxNumOfReachableFieldsBoard = aPossibleShiftOperation;
+                }
+            }
+
+            return maxNumOfReachableFieldsBoard;
+        }
     }
 }
