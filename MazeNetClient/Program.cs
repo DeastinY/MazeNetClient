@@ -51,9 +51,9 @@ namespace MazeNetClient
         {
             while (true)
             {
-                Logger.Write("Join a new game? (J/N):");
+                Logger.Write("Join a new game? (Y/N):");
                 var userInput = Console.ReadLine();
-                bool isYes = StringsAreEqual(userInput, "j");
+                bool isYes = StringsAreEqual(userInput, "y");
                 if (isYes)
                     JoinGame(ipAddress, port);
                 else
