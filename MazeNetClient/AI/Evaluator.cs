@@ -7,8 +7,10 @@ namespace MazeNetClient.AI
 {
     static class Evaluator
     {
-        internal static Move GetBestMove(List<ShiftedBoard> possibleBoards)
+        internal static Move GetBestMove(Board actualBoard)
         {
+            var possibleBoards = ShiftSimulator.GeneratePossibleBoards(actualBoard, actualBoard.ShiftCard, actualBoard.ForbiddenShiftRow, actualBoard.ForbiddenShiftColumn);
+
             var aFindingMove = TryGetTreasureFindingMove(possibleBoards, BestShiftStrategies.MinimizeTotalNumberOfReachableTreasures);
             if (aFindingMove != null)
             {
