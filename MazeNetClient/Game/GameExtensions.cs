@@ -183,12 +183,7 @@ namespace MazeNetClient.Game
         /// <returns>True, if the field contains the player, false otherwise.</returns>
         internal static bool ContainsPlayer(this Field field, int playerId)
         {
-            foreach (var aPlayer in field.ContainingPlayers)
-            {
-                if (aPlayer == playerId)
-                    return true;
-            }
-            return false;
+            return field.ContainingPlayers.Any(p => p == playerId);
         }
 
         /// <summary>
@@ -225,6 +220,23 @@ namespace MazeNetClient.Game
             Debug.Assert(numberOfOpenPaths % 2 == 0);
             numberOfOpenPaths /= 2; //we counted each path twice
             return numberOfOpenPaths;
+        }
+
+        [Conditional("DEBUG")]
+        internal static void AssertValidIFieldCollection(this IFieldCollection fieldCollection)
+        {
+            //The fieldCollection must contain our playerId exactly one time.
+            Debug.Assert(fieldCollection.Count(f => f.ContainsPlayer(Board.Current.PlayerId)) == 1);
+
+            foreach (var anEnemy in Board.Current.GetEnemyPlayers())
+            {
+                Debug.Assert(fieldCollection.Count(f => f.ContainsPlayer(anEnemy)) == 1);
+            }
+
+            //The fieldCollection must contain each treasure except of when one is in the shift card.
+            var count = fieldCollection.Where(f => System.Enum.GetValues(typeof(XSDGenerated.treasureType)).Cast<XSDGenerated.treasureType>().Any(t => f.HasTreasure(t))).Count();
+            var length = System.Enum.GetValues(typeof(XSDGenerated.treasureType)).Length;
+            Debug.Assert((count == length) || (count == length - 1));
         }
     }
 }

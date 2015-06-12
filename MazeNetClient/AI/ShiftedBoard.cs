@@ -69,6 +69,10 @@ namespace MazeNetClient.AI
         /// <param name="shiftCardRotation">The rotation that will be applied to the shift card.</param>
         internal ShiftedBoard(IFieldCollection actualBoard, Field shiftCard, int shiftPositionRowIndex, int shiftPositionColumnIndex, Rotation shiftCardRotation)
         {
+            Debug.Assert(actualBoard.Count(f => f.ContainsPlayer(Board.Current.PlayerId)) == 1);
+            Debug.Assert(Board.Current.GetEnemyPlayers().All(p => actualBoard.Count(f => f.ContainsPlayer(p)) == 1));
+            Debug.Assert(actualBoard.Where(f => System.Enum.GetValues(typeof(treasureType)).Cast<treasureType>().Any(t => f.HasTreasure(t))).Count() >= (System.Enum.GetValues(typeof(treasureType)).Length) - 1);
+
             m_fields = new Field[Board.ROW_COUNT * Board.COLUMN_COUNT];
             ShiftPositionRowIndex = shiftPositionRowIndex;
             ShiftPositionColumnIndex = shiftPositionColumnIndex;
@@ -163,6 +167,8 @@ namespace MazeNetClient.AI
                 TreasureTargetRowIndex = -1;
                 TreasureTargetColumnIndex = -1;
             }
+
+            this.AssertValidIFieldCollection();
         }
 
         public Field this[int row, int column]
