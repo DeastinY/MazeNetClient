@@ -238,5 +238,19 @@ namespace MazeNetClient.Game
             var length = System.Enum.GetValues(typeof(XSDGenerated.treasureType)).Length;
             Debug.Assert((count == length) || (count == length - 1));
         }
+
+        /// <summary>
+        /// Returns the id of the player that comes after the specified current player.
+        /// </summary>
+        /// <param name="currentPlayerId">The id of the current player.</param>
+        /// <returns>The id of the player that comes after the specified player.</returns>
+        internal static int FollowingPlayer(this int currentPlayerId)
+        {
+            Debug.Assert(Board.Current.TreasuresToGo.Count(t => t.player == currentPlayerId) == 1);
+            int playerCount = Board.Current.TreasuresToGo.Length;
+            int nextPlayerId = (currentPlayerId % playerCount) + 1;
+            Debug.Assert(Board.Current.TreasuresToGo.Count(t => t.player == nextPlayerId) == 1);
+            return nextPlayerId;
+        }
     }
 }
