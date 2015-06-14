@@ -150,6 +150,7 @@ namespace MazeNetClient.Game
             PlayerThreeNumReachableTreasures = this.GetNumberOfReachableTreasures(3);
             PlayerFourNumReachableTreasures = this.GetNumberOfReachableTreasures(4);
 
+            this.AssertValidIFieldCollection();
             boardHistory.Add(this);
         }
 
