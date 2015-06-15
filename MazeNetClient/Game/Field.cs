@@ -20,6 +20,17 @@ namespace MazeNetClient.Game
         internal readonly int ColumnIndex;
 
         /// <summary>
+        /// Contains the identifier of the player, that stand on this field.
+        /// </summary>
+        internal readonly int[] ContainingPlayers;
+
+        /// <summary>
+        /// Describes the type of the treasure, that this field contains.
+        /// First query the value of ContainsTreasure, to test whether this field contains a Treasure.
+        /// </summary>
+        internal readonly treasureType Treasure;
+
+        /// <summary>
         /// Indicates, whether the field is open on the left side.
         /// </summary>
         internal readonly bool IsLeftOpen;
@@ -38,17 +49,6 @@ namespace MazeNetClient.Game
         /// Indicates, whether the field is open on the lower side.
         /// </summary>
         internal readonly bool IsBottomOpen;
-
-        /// <summary>
-        /// Contains the identifier of the player, that stand on this field.
-        /// </summary>
-        internal readonly int[] ContainingPlayers;
-
-        /// <summary>
-        /// Describes the type of the treasure, that this field contains.
-        /// First query the value of ContainsTreasure, to test whether this field contains a Treasure.
-        /// </summary>
-        internal readonly treasureType Treasure;
 
         /// <summary>
         /// Indicates, whether this field contains a treasure.
