@@ -200,50 +200,43 @@ namespace MazeNetClient.AI
 
         private void InsertShiftCard(Field from, Rotation rotation, int shiftPositionRowIndex, int shiftPositionColumnIndex)
         {
-            Openings openSides = 0;
+            bool isLeftOpen = false,
+                 isTopOpen = false,
+                 isRightOpen = false,
+                 isBottomOpen = false;
 
             switch (rotation)
             {
                 case Rotation.DEGREE_0:
-                    openSides = from.OpenSides;
+                    isLeftOpen = from.IsLeftOpen;
+                    isTopOpen = from.IsTopOpen;
+                    isRightOpen = from.IsRightOpen;
+                    isBottomOpen = from.IsBottomOpen;
                     break;
                 case Rotation.DEGREE_90:
-                    //isLeftOpen = from.IsBottomOpen;
-                    //isTopOpen = from.IsLeftOpen;
-                    //isRightOpen = from.IsTopOpen;
-                    //isBottomOpen = from.IsRightOpen;
-
-                    openSides = (Openings)((byte)from.OpenSides << 1);
-                    if ((from.OpenSides & Openings.Bottom) == Openings.Bottom) openSides |= Openings.Left;
-
+                    isLeftOpen = from.IsBottomOpen;
+                    isTopOpen = from.IsLeftOpen;
+                    isRightOpen = from.IsTopOpen;
+                    isBottomOpen = from.IsRightOpen;
                     break;
                 case Rotation.DEGREE_180:
-                    //isLeftOpen = from.IsRightOpen;
-                    //isTopOpen = from.IsBottomOpen;
-                    //isRightOpen = from.IsLeftOpen;
-                    //isBottomOpen = from.IsTopOpen;
-
-                    openSides = (Openings)((byte)from.OpenSides << 2);
-                    if ((from.OpenSides & Openings.Bottom) == Openings.Bottom) openSides |= Openings.Top;
-                    if ((from.OpenSides & Openings.Right) == Openings.Right) openSides |= Openings.Left;
-
-                    Debug.Assert(openSides != from.OpenSides, "When you shifted a card and the open sides are still equal, you shifted a symmetric card! That is useless.");
+                    isLeftOpen = from.IsRightOpen;
+                    isTopOpen = from.IsBottomOpen;
+                    isRightOpen = from.IsLeftOpen;
+                    isBottomOpen = from.IsTopOpen;
                     break;
                 case Rotation.DEGREE_270:
-                    //isLeftOpen = from.IsTopOpen;
-                    //isTopOpen = from.IsRightOpen;
-                    //isRightOpen = from.IsBottomOpen;
-                    //isBottomOpen = from.IsLeftOpen;
-
-                    openSides = (Openings)((byte)from.OpenSides >> 1);
-                    if ((from.OpenSides & Openings.Left) == Openings.Left) openSides |= Openings.Bottom;
+                    isLeftOpen = from.IsTopOpen;
+                    isTopOpen = from.IsRightOpen;
+                    isRightOpen = from.IsBottomOpen;
+                    isBottomOpen = from.IsLeftOpen;
                     break;
                 default:
                     Debug.Assert(false, "Invalid value of enum rotation: " + rotation);
                     break;
             }
 
-            var shiftCard = new Field(shiftPositionRowIndex, shiftPositionColumnIndex, openSides,
+            var shiftCard = new Field(shiftPositionRowIndex, shiftPositionColumnIndex, isLeftOpen, isTopOpen, isRightOpen, isBottomOpen,
                 (int[])KickedField.ContainingPlayers.Clone(), from.Treasure, from.ContainsTreasure);
 
             int shiftCard1DIndex = shiftPositionRowIndex * Board.ROW_COUNT + shiftPositionColumnIndex;
@@ -272,7 +265,7 @@ namespace MazeNetClient.AI
 
         private Field CreateCopy(Field source, int newRowIndex, int newColumnIndex)
         {
-            return new Field(newRowIndex, newColumnIndex, source.OpenSides,
+            return new Field(newRowIndex, newColumnIndex, source.IsLeftOpen, source.IsTopOpen, source.IsRightOpen, source.IsBottomOpen,
                source.ContainingPlayers, source.Treasure, source.ContainsTreasure);
         }
     }
