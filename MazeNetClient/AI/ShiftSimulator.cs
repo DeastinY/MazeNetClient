@@ -54,7 +54,7 @@ namespace MazeNetClient.AI
                     AddAllShiftRotations(possibleBoards, currentBoard, shiftCard, Board.ROW_COUNT - 1, j);
             }
 
-            Debug.Assert(possibleBoards.Capacity == MAX_NUMBER_OF_SHIFTS && (possibleBoards.Count == MAX_NUMBER_OF_SHIFTS || possibleBoards.Count + 4 == MAX_NUMBER_OF_SHIFTS));
+            Debug.Assert(possibleBoards.Capacity == MAX_NUMBER_OF_SHIFTS);
             return possibleBoards;
         }
 
@@ -66,10 +66,15 @@ namespace MazeNetClient.AI
 
         static void AddAllShiftRotations(List<ShiftedBoard> container, IFieldCollection currentBoard, Field shiftCard, int shiftCardPositionRowIndex, int shiftCardPositionColumnIndex)
         {
+            bool symmetricShiftCard = (shiftCard.IsLeftOpen && shiftCard.IsRightOpen) ^ (shiftCard.IsTopOpen && shiftCard.IsBottomOpen);
+
             foreach (Rotation aRotation in Enum.GetValues(typeof(Rotation)))
             {
-                var aShiftedBoard = new ShiftedBoard(currentBoard, shiftCard, shiftCardPositionRowIndex, shiftCardPositionColumnIndex, aRotation);
-                container.Add(aShiftedBoard);
+                if (!symmetricShiftCard || aRotation != Rotation.DEGREE_180)
+                {
+                    var aShiftedBoard = new ShiftedBoard(currentBoard, shiftCard, shiftCardPositionRowIndex, shiftCardPositionColumnIndex, aRotation);
+                    container.Add(aShiftedBoard);
+                }
             }
         }
     }
