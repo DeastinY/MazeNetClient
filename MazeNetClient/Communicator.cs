@@ -86,9 +86,14 @@ namespace MazeNetClient
             {
                 Debug.Assert(nextMessage.id == m_clientId);
 
+                var timeStamp = -Stopwatch.GetTimestamp();
+
                 var awaitMoveMessage = (AwaitMoveMessageType)nextMessage.Item;
                 var currentBoard = new Board(awaitMoveMessage, m_clientId);
                 var nextMove = GenerateNextMove(currentBoard, awaitMoveMessage.board.shiftCard);
+
+                timeStamp += Stopwatch.GetTimestamp();
+                Logger.WriteLine("Calculation time: " + (timeStamp / Stopwatch.Frequency) + "s");
 
                 SendMoveMessage(nextMove);
 
