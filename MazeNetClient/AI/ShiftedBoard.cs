@@ -220,6 +220,7 @@ namespace MazeNetClient.AI
                     isBottomOpen = from.IsRightOpen;
                     break;
                 case Rotation.DEGREE_180:
+                    Debug.Assert(!from.IsSymmetric(), "Do not rotate a field by 180° when it is symmetric!");
                     isLeftOpen = from.IsRightOpen;
                     isTopOpen = from.IsBottomOpen;
                     isRightOpen = from.IsLeftOpen;

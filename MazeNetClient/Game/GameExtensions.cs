@@ -251,5 +251,18 @@ namespace MazeNetClient.Game
             Debug.Assert(Board.Current.TreasuresToGo.Count(t => t.player == nextPlayerId) == 1);
             return nextPlayerId;
         }
+
+        /// <summary>
+        /// Test if the given field is symmetric.
+        /// That means if it is only at the left and right side open, or only at the upper and lower side open.
+        /// </summary>
+        /// <param name="field">The given field to proof the symmetry for.</param>
+        /// <returns>True if the given field is symmetric, false otherwise.</returns>
+        internal static bool IsSymmetric(this Field field)
+        {
+            bool isVertical = field.IsLeftOpen && field.IsRightOpen && !field.IsTopOpen && !field.IsBottomOpen;
+            bool isHorizontal = !field.IsLeftOpen && !field.IsRightOpen && field.IsTopOpen && field.IsBottomOpen;
+            return isVertical || isHorizontal;
+        }
     }
 }

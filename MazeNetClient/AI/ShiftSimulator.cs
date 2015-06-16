@@ -66,7 +66,7 @@ namespace MazeNetClient.AI
 
         static void AddAllShiftRotations(List<ShiftedBoard> container, IFieldCollection currentBoard, Field shiftCard, int shiftCardPositionRowIndex, int shiftCardPositionColumnIndex)
         {
-            bool symmetricShiftCard = (shiftCard.IsLeftOpen && shiftCard.IsRightOpen) ^ (shiftCard.IsTopOpen && shiftCard.IsBottomOpen);
+            bool symmetricShiftCard = shiftCard.IsSymmetric();
 
             foreach (Rotation aRotation in Enum.GetValues(typeof(Rotation)))
             {
