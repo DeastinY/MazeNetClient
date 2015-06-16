@@ -215,6 +215,10 @@ namespace MazeNetClient
             }
         }
 
+        /// <summary>
+        /// Interprets the given MazeCom-object that can be either a win- or a disconnect-message.
+        /// </summary>
+        /// <param name="finalMazeComMessage">The given MazeCom-object that describes the last message from the server before the game finishes.</param>
         private void InterpretFinalMessage(MazeCom finalMazeComMessage)
         {
             if (finalMazeComMessage.mcType == MazeComType.WIN)
