@@ -73,26 +73,6 @@ namespace MazeNetClient.Game
         internal readonly TreasuresToGoType[] TreasuresToGo;
 
         /// <summary>
-        /// Describes the number of treasures, that the player with id 1 can reach on this board without any shift operation.
-        /// </summary>
-        internal readonly int PlayerOneNumReachableTreasures;
-
-        /// <summary>
-        /// Describes the number of treasures, that the player with id 2 can reach on this board without any shift operation.
-        /// </summary>
-        internal readonly int PlayerTwoNumReachableTreasures;
-
-        /// <summary>
-        /// Describes the number of treasures, that the player with id 3 can reach on this board without any shift operation.
-        /// </summary>
-        internal readonly int PlayerThreeNumReachableTreasures;
-
-        /// <summary>
-        /// Describes the number of treasures, that the player with id 4 can reach on this board without any shift operation.
-        /// </summary>
-        internal readonly int PlayerFourNumReachableTreasures;
-
-        /// <summary>
         /// Creates and initializes a new instance of the Board type, depending on the specified AwaitMoveMessageType.
         /// </summary>
         /// <param name="currentGameStatus">The specified AwaitMoveMessageType, that contains data bout the board and the game status.</param>
@@ -143,12 +123,6 @@ namespace MazeNetClient.Game
                     treasures = treasuresToGo[i].treasures
                 };
             }
-
-            //Initialize the different numbers of reachable fields for the four different players.
-            PlayerOneNumReachableTreasures = this.GetNumberOfReachableTreasures(1);
-            PlayerTwoNumReachableTreasures = this.GetNumberOfReachableTreasures(2);
-            PlayerThreeNumReachableTreasures = this.GetNumberOfReachableTreasures(3);
-            PlayerFourNumReachableTreasures = this.GetNumberOfReachableTreasures(4);
 
             boardHistory.Add(this);
             this.AssertValidIFieldCollection();
