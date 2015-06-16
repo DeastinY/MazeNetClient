@@ -62,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\OneStepAheadStrategy.cs" />
     <Compile Include="AI\ClosestToTreasureStrategy.cs" />
     <Compile Include="AI\Evaluator.cs" />
     <Compile Include="AI\BestShiftStrategies.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="AI\Rotation.cs" />
     <Compile Include="AI\ShiftSimulator.cs" />
     <Compile Include="AI\ShiftedBoard.cs" />
+    <Compile Include="AI\SimulatedMoveResult.cs" />
     <Compile Include="AI\StupidRating.cs" />
     <Compile Include="Communicator.cs" />
     <Compile Include="Game\Field.cs" />
