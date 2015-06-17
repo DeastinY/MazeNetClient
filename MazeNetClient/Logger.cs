@@ -32,6 +32,14 @@ namespace MazeNetClient
             Console.WriteLine(value);
         }
 
+        internal static void WriteLineColored(string value, ConsoleColor color)
+        {
+            var previousColor = Console.ForegroundColor;
+            Console.ForegroundColor = color;
+            WriteLine(value);
+            Console.ForegroundColor = previousColor;
+        }
+
         internal static void WriteLine()
         {
             Console.WriteLine();

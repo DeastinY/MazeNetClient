@@ -13,6 +13,8 @@ namespace MazeNetClient.AI
         {
             Debug.Assert(actualBoard == Board.Current);
 
+            //TreasureTracker.Instance.UpdateStatus();
+
             var ourPlayer = actualBoard.PlayerId;
 
             //First generate all possible shift operations that we can make within our draw.
@@ -32,9 +34,13 @@ namespace MazeNetClient.AI
                 {
                     FilterPossibleShiftedBoardsSuchThatGivenEnemyCantReachHisLastTreasure(possibleBoards, nextPlayer);
 
-                    //When we reach this line of code and possibleBoards is empty than we know, that we have lost and our following player won the game!
-                    //Just regenerate the possible boards. Maybe we will find one more treasure before we lose.
-                    possibleBoards = ShiftSimulator.GeneratePossibleBoards(actualBoard, actualBoard.ShiftCard, actualBoard.ForbiddenShiftRow, actualBoard.ForbiddenShiftColumn);
+                    if (possibleBoards.Count == 0)
+                    {
+                        //When we reach this line of code and possibleBoards is empty than we know, that we have lost and our following player won the game!
+                        //Just regenerate the possible boards. Maybe we will find one more treasure before we lose.
+                        //And maybe the enemy does not know that he can find his last treasure!
+                        possibleBoards = ShiftSimulator.GeneratePossibleBoards(actualBoard, actualBoard.ShiftCard, actualBoard.ForbiddenShiftRow, actualBoard.ForbiddenShiftColumn);
+                    }
                 }
             }
 
@@ -44,10 +50,11 @@ namespace MazeNetClient.AI
             var aFindingMove = TryGetTreasureFindingMove(possibleBoards, BestShiftStrategies.MinimizeTotalNumberOfReachableTreasures);
             if (aFindingMove != null)
             {
-                Logger.WriteLine("Found our next treasure!");
+                Logger.WriteLineColored("Found our next treasure!", ConsoleColor.Green);
+                //TreasureTracker.Instance.AddFoundTreasureForOurPlayer();
                 return aFindingMove;
             }
-            else Logger.WriteLine("Didn't find our next treasure!");
+            else Logger.WriteLineColored("Didn't find our next treasure!", ConsoleColor.Yellow);
 
 
             //TODO: What do we want to do now?
