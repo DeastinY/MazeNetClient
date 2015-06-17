@@ -241,13 +241,24 @@ namespace MazeNetClient.Game
         /// <summary>
         /// Returns the id of the player that comes after the specified current player.
         /// </summary>
-        /// <param name="currentPlayerId">The id of the current player.</param>
+        /// <param name="currentPlayerId">The id of the current player. It does not have to be the id of our player.</param>
         /// <returns>The id of the player that comes after the specified player.</returns>
         internal static int FollowingPlayer(this int currentPlayerId)
         {
             Debug.Assert(Board.Current.TreasuresToGo.Count(t => t.player == currentPlayerId) == 1);
-            int playerCount = Board.Current.TreasuresToGo.Length;
-            int nextPlayerId = (currentPlayerId % playerCount) + 1;
+            int nextPlayerId = -1;
+            var followingTreasureToGoType = Board.Current.TreasuresToGo.FirstOrDefault(t => t.player > currentPlayerId);
+            if (followingTreasureToGoType == null) //There is no player with an higher id
+            {
+                Debug.Assert(currentPlayerId != 1);
+                Debug.Assert(Board.Current.TreasuresToGo.Min(t => t.player) < currentPlayerId);
+                nextPlayerId = Board.Current.TreasuresToGo.Min(t => t.player);
+            }
+            else
+            {
+                nextPlayerId = followingTreasureToGoType.player;
+            }
+
             Debug.Assert(Board.Current.TreasuresToGo.Count(t => t.player == nextPlayerId) == 1);
             return nextPlayerId;
         }

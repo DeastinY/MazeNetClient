@@ -125,6 +125,7 @@ namespace MazeNetClient.Game
             }
 
             boardHistory.Add(this);
+            Board.Current = this;
             this.AssertValidIFieldCollection();
         }
 
@@ -188,11 +189,8 @@ namespace MazeNetClient.Game
         }
 
         /// <summary>
-        /// Gets the board of the current round, which is always the last board in the history.
+        /// Gets (or private sets) the board of the current round, which is always the last board in the history.
         /// </summary>
-        internal static Board Current
-        {
-            get { return GetBoard(HistoryLength - 1); }
-        }
+        internal static Board Current { get; private set; }
     }
 }
