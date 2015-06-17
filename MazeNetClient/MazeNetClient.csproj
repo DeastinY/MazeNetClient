@@ -73,6 +73,7 @@
     <Compile Include="AI\ShiftedBoard.cs" />
     <Compile Include="AI\SimulatedMoveResult.cs" />
     <Compile Include="AI\StupidRating.cs" />
+    <Compile Include="AI\TreasureTracker.cs" />
     <Compile Include="Communicator.cs" />
     <Compile Include="Game\Field.cs" />
     <Compile Include="Game\GameExtensions.cs" />
