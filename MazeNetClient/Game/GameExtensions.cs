@@ -264,6 +264,18 @@ namespace MazeNetClient.Game
         }
 
         /// <summary>
+        /// Returns the id of the player that comes before the specified current player.
+        /// </summary>
+        /// <param name="currentPlayerId">The id of the current player. It does not have to be the id of our player.</param>
+        /// <returns>The id of the player that comes before the specified player.</returns>
+        internal static int PreviousPlayer(this int currentPlayerId)
+        {
+            int previousPlayer;
+            for (previousPlayer = currentPlayerId.FollowingPlayer(); previousPlayer.FollowingPlayer() != currentPlayerId; previousPlayer = previousPlayer.FollowingPlayer()) ;
+            return previousPlayer;
+        }
+
+        /// <summary>
         /// Test if the given field is symmetric.
         /// That means if it is only at the left and right side open, or only at the upper and lower side open.
         /// </summary>
