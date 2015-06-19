@@ -160,17 +160,17 @@ namespace MazeNetClient.Game
 
         /// <summary>
         /// Get the number of treasures, that you can reach from the field that contains the player with the specified id.
+        /// This function only counts treasures that the player with the given id still misses and has not found yet.
         /// </summary>
         /// <param name="board">The board on that you search.</param>
         /// <param name="playerId">The id of the player from where we start.</param>
         /// <returns>The number of reachable treasures.</returns>
         internal static int GetNumberOfReachableTreasures(this IFieldCollection board, int playerId)
         {
-            Debug.Assert(board.Count(f => f.ContainsPlayer(playerId)) == 1);
-
             var playerField = board.First(f => f.ContainsPlayer(playerId));
             var reachableFields = board.GetReachableFields(playerField.RowIndex, playerField.ColumnIndex);
-            int numberOfFieldsWithATreasure = reachableFields.Count(rf => rf.ContainsTreasure);
+            var missingTreasures = AI.TreasureTracker.Instance.MissingTreasures(playerId);
+            int numberOfFieldsWithATreasure = reachableFields.Count(rf => missingTreasures.Any(t => rf.HasTreasure(t)));
             return numberOfFieldsWithATreasure;
         }
 
@@ -250,8 +250,7 @@ namespace MazeNetClient.Game
             var followingTreasureToGoType = Board.Current.TreasuresToGo.FirstOrDefault(t => t.player > currentPlayerId);
             if (followingTreasureToGoType == null) //There is no player with an higher id
             {
-                Debug.Assert(currentPlayerId != 1);
-                Debug.Assert(Board.Current.TreasuresToGo.Min(t => t.player) < currentPlayerId);
+                //So the following player must be the one with the lowest id.
                 nextPlayerId = Board.Current.TreasuresToGo.Min(t => t.player);
             }
             else

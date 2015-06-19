@@ -13,7 +13,7 @@ namespace MazeNetClient.AI
         {
             Debug.Assert(actualBoard == Board.Current);
 
-            //TreasureTracker.Instance.UpdateStatus();
+            TreasureTracker.Instance.UpdateStatus();
 
             var ourPlayer = actualBoard.PlayerId;
 
@@ -47,11 +47,10 @@ namespace MazeNetClient.AI
             Debug.Assert(possibleBoards.Count != 0, "The number of possible shift operations should never become zero!");
 
             //When we find a move that leads us to our treasure, we will return that move.
-            var aFindingMove = TryGetTreasureFindingMove(possibleBoards, BestShiftStrategies.MinimizeTotalNumberOfReachableTreasures);
+            var aFindingMove = TryGetTreasureFindingMove(possibleBoards, BestShiftStrategies.MinimizeTotalNumberOfReachableTreasuresForBestPlayers);
             if (aFindingMove != null)
             {
-                Logger.WriteLineColored("Found our next treasure!", ConsoleColor.Green);
-                //TreasureTracker.Instance.AddFoundTreasureForOurPlayer();
+                TreasureTracker.Instance.AddFoundTreasureForOurPlayer();
                 return aFindingMove;
             }
             else Logger.WriteLineColored("Didn't find our next treasure!", ConsoleColor.Yellow);

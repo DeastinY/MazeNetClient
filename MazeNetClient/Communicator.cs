@@ -44,6 +44,9 @@ namespace MazeNetClient
 
             //Reset the board-history, because maybe there are still boards left from a previous game.
             Board.ResetBoardHistory();
+
+            //(Re-)Initialize the singleton of the treasure tracker.
+            TreasureTracker.StartNewTracker();
         }
 
         /// <summary>
