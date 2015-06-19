@@ -60,9 +60,11 @@ namespace MazeNetClient.AI
             var otherPlayersTreasuresToGo = Board.Current.TreasuresToGo.Where(t => t.player != Board.Current.PlayerId).ToArray();
             if (otherPlayersTreasuresToGo.Length == 0)
             {
+                //TODO: During a test game with one enemy player I reached this code! But that shouldn't have happened, because we were two player!
                 Logger.WriteLine("You call MinimizeTotalNumberOfReachableTreasuresForBestPlayers with a list of TreasuresToGo with only the treasures of our player!");
-                Logger.WriteLine("Because there is no way to work correct for MinimizeTotalNumberOfReachableTreasuresForBestPlayers, we just return the last index of the possibleMoves!");
-                return possibleShiftOperations.Last();
+                Logger.WriteLine("Because there is no way to work correct for MinimizeTotalNumberOfReachableTreasuresForBestPlayers, we just return a random possibleMove!");
+                int randomIndex = new Random().Next(possibleShiftOperations.Count());
+                return possibleShiftOperations.ElementAt(randomIndex);
             }
 
             int minimalNumberOfMissingTreasures = otherPlayersTreasuresToGo.Min(t => t.treasures);
