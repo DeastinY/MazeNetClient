@@ -280,7 +280,7 @@ namespace MazeNetClient.AI
             //Iterate over all possible players.
             for (int p = 1; p <= 4; ++p)
             {
-                if (playerId != p) //When a player is not the specified playerId remove the concerning start position.
+                if (playerId != p) //When p is not the specified playerId remove the concerning start position of p.
                 {
                     var playersStartPosition = (treasureType)Enum.Parse(typeof(treasureType), "Start0" + p);
                     Debug.Assert(playersStartPosition == treasureType.Start01 || playersStartPosition == treasureType.Start02 || playersStartPosition == treasureType.Start03 || playersStartPosition == treasureType.Start04);
@@ -297,6 +297,13 @@ namespace MazeNetClient.AI
                         Debug.Assert(removeResult);
                     }
                 }
+            }
+
+            if (playerId != Board.Current.PlayerId)
+            {
+                //Also remove the treasure that our player needs to find next
+                var removeResult = missingTreasures.Remove(Board.Current.TreasureTarget);
+                Debug.Assert(removeResult);
             }
 
             return missingTreasures;
