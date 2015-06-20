@@ -92,8 +92,6 @@ namespace MazeNetClient.AI
             Logger.WriteLine("Player " + playerId + " found a treasure.");
         }
 
-        //maps the list of treasures that were found last round to the number of players that found treasures
-
         /// <summary>
         /// Identifies which of the given enemy players found which of the given treasures.
         /// After the identification each pair of player and treasure will be added to our data structures calling AddFoundTreasureForPlayer.
@@ -241,7 +239,11 @@ namespace MazeNetClient.AI
                     }
                 }
 
-                MapFoundTreasuresToPlayers(newlyFoundTreasures, playersThatFound);
+                //We added that if closure, because it can happen that an enemy player that found a treasure disconnected after that.
+                //And this scenario would lead us to a newlyFoundTreasures list and a playersThatFound list with different numbers of elements. 
+                //This case is extremely rare, because there is no reason for a player to disconnect after he found a treasure (finding a treasure means that you sent a valid move to the server).
+                if (newlyFoundTreasures.Count == playersThatFound.Count)
+                    MapFoundTreasuresToPlayers(newlyFoundTreasures, playersThatFound);
             }
 
             Debug.Assert(m_foundTreasures.Count == foundTreasures.Length);
