@@ -301,7 +301,7 @@ namespace MazeNetClient.AI
                 }
             }
 
-            if (playerId != Board.Current.PlayerId)
+            if (playerId != Board.Current.PlayerId && Board.Current.TreasureTarget != (treasureType)Enum.Parse(typeof(treasureType), "Start0" + Board.Current.PlayerId))
             {
                 //Also remove the treasure that our player needs to find next
                 var removeResult = missingTreasures.Remove(Board.Current.TreasureTarget);
