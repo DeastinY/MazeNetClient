@@ -28,9 +28,8 @@ namespace MazeNetClient.AI
             var nextPlayersMissingTreasuresCount = actualBoard.TreasuresToGo.First(ttg => ttg.player == nextPlayer).treasures;
             if (nextPlayersMissingTreasuresCount == 1)
             {
-                BestShiftStrategy anyStrategy = new BestShiftStrategy(i => i.First());
                 var ourPlayersMissingTreasuresCount = actualBoard.TreasuresToGo.First(ttg => ttg.player == ourPlayer).treasures;
-                if ((ourPlayersMissingTreasuresCount != 1) || (TryGetTreasureFindingMove(possibleBoards, anyStrategy) == null))
+                if ((ourPlayersMissingTreasuresCount != 1) || (!CanReachTreasure(possibleBoards)))
                 {
                     FilterPossibleShiftedBoardsSuchThatGivenEnemyCantReachHisLastTreasure(possibleBoards, nextPlayer);
 
@@ -47,7 +46,7 @@ namespace MazeNetClient.AI
             Debug.Assert(possibleBoards.Count != 0, "The number of possible shift operations should never become zero!");
 
             //When we find a move that leads us to our treasure, we will return that move.
-            var aFindingMove = TryGetTreasureFindingMove(possibleBoards, BestShiftStrategies.MinimizeTotalNumberOfReachableTreasuresForBestPlayers);
+            var aFindingMove = TryGetTreasureFindingMove(possibleBoards);
             if (aFindingMove != null)
             {
                 TreasureTracker.Instance.AddFoundTreasureForOurPlayer();
@@ -68,15 +67,13 @@ namespace MazeNetClient.AI
             }
 
             //The OneStepAheadStrategies can return tuples with Moves equal to null. Remove those!
-            for (int i = 0; i != ratedMoves.Count; )
-            {
-                if (ratedMoves[i].Item1 == null) ratedMoves.RemoveAt(i);
-                else ++i;
-            }
+            ratedMoves.RemoveAll(tuple => tuple.Item1 == null);
 
             if (ratedMoves.Count == 0) //The OneStepAheadStrategy did only return tuples with Moves equal to null.
             {
-                var shiftedBoard = BestShiftStrategies.MinimizeTotalNumberOfReachableTreasuresForBestPlayers(possibleBoards);
+                var enemyHarmingShiftedBoards = BestShiftStrategies.MinimizeTotalNumberOfReachableTreasuresForBestPlayers(possibleBoards);
+                var randomIndex = new Random().Next(enemyHarmingShiftedBoards.Count);
+                var shiftedBoard = enemyHarmingShiftedBoards[randomIndex];
                 var tuple = new ClosestToTreasureStrategy().GetBestMove(shiftedBoard);
                 return tuple.Item1;
             }
@@ -100,9 +97,8 @@ namespace MazeNetClient.AI
         /// choose the one that we will return.
         /// </summary>
         /// <param name="possibleShiftedBoards">The given list of possible shifted boards.</param>
-        /// <param name="bestShiftFinder">The BestShiftStrategy that chooses a ShiftedBoard of the list of those on which we can find our treasure.</param>
         /// <returns>A move with that we will find our next treasure or null if there is no possibleShiftedBoard on that we can find our treasure.</returns>
-        static Move TryGetTreasureFindingMove(IEnumerable<ShiftedBoard> possibleShiftedBoards, BestShiftStrategy bestShiftFinder)
+        static Move TryGetTreasureFindingMove(IEnumerable<ShiftedBoard> possibleShiftedBoards)
         {
             var findingMoves = new List<ShiftedBoard>();
             var treasureTarget = Board.Current.TreasureTarget;
@@ -123,7 +119,19 @@ namespace MazeNetClient.AI
                 return null;
             }
 
-            var findingMove = bestShiftFinder(findingMoves);
+            if (Board.Current.TreasuresToGo.Any(ttg => ttg.player == Board.Current.PlayerId && ttg.treasures == 2))
+            {
+                //When our player just needs two more treasures, try to shift such that he can also reach his last treasure in his next move.
+                var lastTreasure = (treasureType)Enum.Parse(typeof(treasureType), "Start0" + Board.Current.PlayerId);
+                var lastTreasureReachingShiftedBoards = BestShiftStrategies.GetShiftedBoardsThatAlsoReachGivenTreasure(findingMoves, lastTreasure);
+                if (lastTreasureReachingShiftedBoards.Count != 0)
+                    findingMoves = lastTreasureReachingShiftedBoards;
+            }
+
+            findingMoves = BestShiftStrategies.MinimizeTotalNumberOfReachableTreasuresForBestPlayers(findingMoves);
+            findingMoves = BestShiftStrategies.MaximizeNumberOfReachableTreasuresForOurPlayer(findingMoves);
+            int randomIndex = new Random().Next(findingMoves.Count);
+            var findingMove = findingMoves[randomIndex];
             Debug.Assert(findingMove.GetReachableFields(findingMove.PlayerPositionRowIndex, findingMove.PlayerPositionColumnIndex).Count(f =>
                 f.RowIndex == findingMove.TreasureTargetRowIndex && f.ColumnIndex == findingMove.TreasureTargetColumnIndex) == 1);
             return Move.Create(findingMove, findingMove.TreasureTargetRowIndex, findingMove.TreasureTargetColumnIndex);
@@ -139,10 +147,6 @@ namespace MazeNetClient.AI
         {
             Debug.Assert(enemyPlayerId != Board.Current.PlayerId, "You try to harm yourself!");
             Debug.Assert(enemyPlayerId == 1 || enemyPlayerId == 2 || enemyPlayerId == 3 || enemyPlayerId == 4, "The enemyPlayerId has an unexpected value: " + enemyPlayerId);
-
-            Debug.Assert((Board.Current.TreasuresToGo.First(ttg => ttg.player == Board.Current.PlayerId).treasures > 1) //Either we still need more than one treasure,
-                || (TryGetTreasureFindingMove(possibleShiftedBoards, new BestShiftStrategy(i => i.First())) == null), //or we can't find our treasure within this draw.
-                "Do not call this function when our player only needs one treasure and you could find that within this move!");
 
             Debug.Assert(Board.Current.TreasuresToGo.First(t => t.player == enemyPlayerId).treasures == 1,
                 "The specified enemy with id " + enemyPlayerId + " needs more than 1 treasure! This is an invalid state for this function!");
@@ -194,6 +198,16 @@ namespace MazeNetClient.AI
 
             possibleShiftedBoards.Clear();
             possibleShiftedBoards.AddRange(canUseThisBoard.Where(pair => pair.Value).Select(pair => pair.Key));
+        }
+
+        /// <summary>
+        /// Tests if our player can reach his next treasure in one of the given possible shift operations.
+        /// </summary>
+        /// <param name="possibleShiftOperations"></param>
+        /// <returns>True when our player can reach his treasure on one of the given possible shift operations, false otherwise.</returns>
+        static bool CanReachTreasure(IEnumerable<ShiftedBoard> possibleShiftOperations)
+        {
+            return possibleShiftOperations.Any(b => b.GetReachableFields(b.PlayerPositionRowIndex, b.PlayerPositionColumnIndex).Any(f => f.HasTreasure(Board.Current.TreasureTarget)));
         }
     }
 }
